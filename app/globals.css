@@ -105,7 +105,6 @@
 :root {
   --radius: 0.625rem;
 
-  /* Core OW-inspired colors */
   --ow-white: #ffffff;
   --ow-black: #000000;
 
@@ -123,34 +122,30 @@
   --ow-warning: #f59e0b;
   --ow-danger: #ef4444;
 
-  /* Page colors */
-  --ow-bg: #eef3f8;
-  --ow-bg-soft: #f7f9fc;
-  --ow-bg-muted: #dce6f1;
-  --ow-bg-deep: #b9c7d8;
+  /* OW loading-screen inspired light background */
+  --ow-bg: #8fa2c0;
+  --ow-bg-soft: #a7bad3;
+  --ow-bg-muted: #c4d3e5;
+  --ow-bg-deep: #d9e4f1;
 
-  /* Surfaces */
   --ow-surface: #ffffff;
   --ow-surface-soft: #f3f6fa;
   --ow-surface-muted: #e6edf5;
   --ow-surface-hover: #dce6f1;
 
-  /* Borders */
   --ow-border: #cbd5e1;
   --ow-border-strong: #94a3b8;
 
-  /* Text */
   --ow-text: #263241;
   --ow-text-soft: #334155;
   --ow-muted: #536272;
   --ow-subtle: #7b8794;
   --ow-disabled: #9aa6b2;
 
-  /* shadcn semantic tokens */
   --background: var(--ow-bg);
   --foreground: var(--ow-text);
 
-  --card: color-mix(in oklab, var(--ow-white) 88%, transparent);
+  --card: color-mix(in oklab, var(--ow-white) 78%, transparent);
   --card-foreground: var(--ow-text);
 
   --popover: var(--ow-white);
@@ -159,10 +154,10 @@
   --primary: var(--ow-orange);
   --primary-foreground: #111827;
 
-  --secondary: var(--ow-bg-muted);
+  --secondary: color-mix(in oklab, var(--ow-bg-deep) 70%, white);
   --secondary-foreground: var(--ow-text);
 
-  --muted: var(--ow-surface-muted);
+  --muted: color-mix(in oklab, var(--ow-bg-deep) 72%, white);
   --muted-foreground: var(--ow-muted);
 
   --accent: var(--ow-orange);
@@ -180,11 +175,11 @@
   --chart-4: var(--ow-gray-dark);
   --chart-5: var(--ow-gray);
 
-  --sidebar: color-mix(in oklab, var(--ow-white) 84%, transparent);
+  --sidebar: color-mix(in oklab, var(--ow-white) 78%, transparent);
   --sidebar-foreground: var(--ow-text);
   --sidebar-primary: var(--ow-orange);
   --sidebar-primary-foreground: #111827;
-  --sidebar-accent: var(--ow-bg-muted);
+  --sidebar-accent: color-mix(in oklab, var(--ow-bg-deep) 70%, white);
   --sidebar-accent-foreground: var(--ow-text);
   --sidebar-border: color-mix(in oklab, var(--ow-border) 80%, transparent);
   --sidebar-ring: var(--ow-orange);
@@ -283,13 +278,13 @@
     className="ow-page-bg ow-page-overlay min-h-screen text-foreground"
   */
   .ow-page-bg {
-    background-color: var(--ow-bg);
+    background-color: #8fa2c0;
     background-image: linear-gradient(
-      145deg,
-      #eef3f8 0%,
-      #e4ebf4 35%,
-      #dce6f1 68%,
-      #c8d4e3 100%
+      90deg,
+      #afbdd4 0%,
+      #b3c3d8 36%,
+      #d0dbe9 68%,
+      #e5effa 100%
     );
     background-attachment: fixed;
     background-size: cover;
