@@ -5,40 +5,10 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
+
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -46,85 +16,374 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* shadcn semantic colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* OW utility colors */
+  --color-ow-bg: var(--ow-bg);
+  --color-ow-bg-soft: var(--ow-bg-soft);
+  --color-ow-bg-muted: var(--ow-bg-muted);
+  --color-ow-bg-deep: var(--ow-bg-deep);
+
+  --color-ow-surface: var(--ow-surface);
+  --color-ow-surface-soft: var(--ow-surface-soft);
+  --color-ow-surface-muted: var(--ow-surface-muted);
+  --color-ow-surface-hover: var(--ow-surface-hover);
+
+  --color-ow-border: var(--ow-border);
+  --color-ow-border-strong: var(--ow-border-strong);
+
+  --color-ow-text: var(--ow-text);
+  --color-ow-text-soft: var(--ow-text-soft);
+  --color-ow-muted: var(--ow-muted);
+  --color-ow-subtle: var(--ow-subtle);
+  --color-ow-disabled: var(--ow-disabled);
+
+  --color-ow-orange: var(--ow-orange);
+  --color-ow-orange-hot: var(--ow-orange-hot);
+  --color-ow-orange-dark: var(--ow-orange-dark);
+
+  --color-ow-blue: var(--ow-blue);
+  --color-ow-blue-muted: var(--ow-blue-muted);
+
+  --color-ow-gray: var(--ow-gray);
+  --color-ow-gray-dark: var(--ow-gray-dark);
+
+  --color-ow-white: var(--ow-white);
+  --color-ow-black: var(--ow-black);
+
+  --color-ow-success: var(--ow-success);
+  --color-ow-warning: var(--ow-warning);
+  --color-ow-danger: var(--ow-danger);
 }
 
+/* 
+  Light mode:
+  OW2 loading-screen-inspired gray.
+*/
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+  /* Core OW-inspired colors */
+  --ow-white: #ffffff;
+  --ow-black: #000000;
+
+  --ow-orange: #f99e1a;
+  --ow-orange-hot: #ff6a00;
+  --ow-orange-dark: #c76a00;
+
+  --ow-blue: #218ffe;
+  --ow-blue-muted: #405275;
+
+  --ow-gray: #b9c7d8;
+  --ow-gray-dark: #43484c;
+
+  --ow-success: #22c55e;
+  --ow-warning: #f59e0b;
+  --ow-danger: #ef4444;
+
+  /* Page colors */
+  --ow-bg: #eef3f8;
+  --ow-bg-soft: #f7f9fc;
+  --ow-bg-muted: #dce6f1;
+  --ow-bg-deep: #b9c7d8;
+
+  /* Surfaces */
+  --ow-surface: #ffffff;
+  --ow-surface-soft: #f3f6fa;
+  --ow-surface-muted: #e6edf5;
+  --ow-surface-hover: #dce6f1;
+
+  /* Borders */
+  --ow-border: #cbd5e1;
+  --ow-border-strong: #94a3b8;
+
+  /* Text */
+  --ow-text: #263241;
+  --ow-text-soft: #334155;
+  --ow-muted: #536272;
+  --ow-subtle: #7b8794;
+  --ow-disabled: #9aa6b2;
+
+  /* shadcn semantic tokens */
+  --background: var(--ow-bg);
+  --foreground: var(--ow-text);
+
+  --card: color-mix(in oklab, var(--ow-white) 88%, transparent);
+  --card-foreground: var(--ow-text);
+
+  --popover: var(--ow-white);
+  --popover-foreground: var(--ow-text);
+
+  --primary: var(--ow-orange);
+  --primary-foreground: #111827;
+
+  --secondary: var(--ow-bg-muted);
+  --secondary-foreground: var(--ow-text);
+
+  --muted: var(--ow-surface-muted);
+  --muted-foreground: var(--ow-muted);
+
+  --accent: var(--ow-orange);
+  --accent-foreground: #111827;
+
+  --destructive: var(--ow-danger);
+
+  --border: color-mix(in oklab, var(--ow-border) 80%, transparent);
+  --input: color-mix(in oklab, var(--ow-border) 70%, transparent);
+  --ring: var(--ow-orange);
+
+  --chart-1: var(--ow-orange);
+  --chart-2: var(--ow-blue);
+  --chart-3: var(--ow-blue-muted);
+  --chart-4: var(--ow-gray-dark);
+  --chart-5: var(--ow-gray);
+
+  --sidebar: color-mix(in oklab, var(--ow-white) 84%, transparent);
+  --sidebar-foreground: var(--ow-text);
+  --sidebar-primary: var(--ow-orange);
+  --sidebar-primary-foreground: #111827;
+  --sidebar-accent: var(--ow-bg-muted);
+  --sidebar-accent-foreground: var(--ow-text);
+  --sidebar-border: color-mix(in oklab, var(--ow-border) 80%, transparent);
+  --sidebar-ring: var(--ow-orange);
 }
 
+/* 
+  Dark mode:
+  OWPerks-inspired navy/orange.
+*/
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --ow-bg: #030712;
+  --ow-bg-soft: #07111f;
+  --ow-bg-muted: #0b1220;
+  --ow-bg-deep: #020617;
+
+  --ow-surface: #0f172a;
+  --ow-surface-soft: #111827;
+  --ow-surface-muted: #1e293b;
+  --ow-surface-hover: #334155;
+
+  --ow-border: #334155;
+  --ow-border-strong: #f99e1a;
+
+  --ow-text: #f8fafc;
+  --ow-text-soft: #e2e8f0;
+  --ow-muted: #cbd5e1;
+  --ow-subtle: #94a3b8;
+  --ow-disabled: #64748b;
+
+  --background: var(--ow-bg);
+  --foreground: var(--ow-text);
+
+  --card: color-mix(in oklab, var(--ow-surface) 86%, transparent);
+  --card-foreground: var(--ow-text);
+
+  --popover: var(--ow-surface);
+  --popover-foreground: var(--ow-text);
+
+  --primary: var(--ow-orange);
+  --primary-foreground: #111827;
+
+  --secondary: var(--ow-surface-muted);
+  --secondary-foreground: var(--ow-text);
+
+  --muted: var(--ow-surface-muted);
+  --muted-foreground: var(--ow-subtle);
+
+  --accent: var(--ow-orange);
+  --accent-foreground: #111827;
+
+  --destructive: var(--ow-danger);
+
+  --border: color-mix(in oklab, var(--ow-border) 58%, transparent);
+  --input: color-mix(in oklab, var(--ow-border) 72%, transparent);
+  --ring: var(--ow-orange);
+
+  --chart-1: var(--ow-orange);
+  --chart-2: var(--ow-blue);
+  --chart-3: var(--ow-blue-muted);
+  --chart-4: var(--ow-muted);
+  --chart-5: var(--ow-surface-hover);
+
+  --sidebar: color-mix(in oklab, var(--ow-surface) 92%, transparent);
+  --sidebar-foreground: var(--ow-text);
+  --sidebar-primary: var(--ow-orange);
+  --sidebar-primary-foreground: #111827;
+  --sidebar-accent: var(--ow-surface-muted);
+  --sidebar-accent-foreground: var(--ow-text);
+  --sidebar-border: color-mix(in oklab, var(--ow-border) 58%, transparent);
+  --sidebar-ring: var(--ow-orange);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
+
   html {
     @apply font-sans;
+  }
+
+  body {
+    @apply min-h-screen bg-background text-foreground antialiased;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--ow-orange) 35%, transparent);
+    color: var(--ow-text);
+  }
+}
+
+@layer utilities {
+  /*
+    Main page background.
+    Add this to <body>:
+    className="ow-page-bg ow-page-overlay min-h-screen text-foreground"
+  */
+  .ow-page-bg {
+    background-color: var(--ow-bg);
+    background-image: linear-gradient(
+      145deg,
+      #eef3f8 0%,
+      #e4ebf4 35%,
+      #dce6f1 68%,
+      #c8d4e3 100%
+    );
+    background-attachment: fixed;
+    background-size: cover;
+  }
+
+  .dark .ow-page-bg {
+    background-color: #020617;
+    background-image: linear-gradient(
+      145deg,
+      #020617 0%,
+      #04101f 28%,
+      #071a2f 56%,
+      #0b2540 78%,
+      #10365a 100%
+    );
+    background-attachment: fixed;
+    background-size: cover;
+  }
+
+  /*
+    Subtle grid overlay.
+    Use together with .ow-page-bg.
+  */
+  .ow-page-overlay {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .ow-page-overlay::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.18) 1px, transparent 1px);
+    background-size: 180px 180px;
+    opacity: 0.24;
+    mask-image: radial-gradient(circle at center, black 0%, transparent 82%);
+  }
+
+  .dark .ow-page-overlay::before {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    background-size: 64px 64px;
+    opacity: 0.65;
+  }
+
+  /*
+    Card helpers.
+  */
+  .ow-card {
+    @apply rounded-2xl border border-ow-border/40 bg-card/80 text-card-foreground shadow-xl backdrop-blur-xl;
+  }
+
+  .ow-card-hover {
+    @apply transition duration-200 hover:border-ow-orange/50 hover:shadow-2xl;
+  }
+
+  .ow-card-solid {
+    @apply rounded-2xl border border-border bg-card text-card-foreground shadow-xl;
+  }
+
+  /*
+    Glow helpers.
+  */
+  .ow-orange-glow {
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--ow-orange) 16%, transparent),
+      0 18px 50px color-mix(in oklab, var(--ow-orange) 16%, transparent);
+  }
+
+  .ow-blue-glow {
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--ow-blue) 14%, transparent),
+      0 18px 50px color-mix(in oklab, var(--ow-blue) 14%, transparent);
+  }
+
+  /*
+    Optional stronger hero-section background.
+  */
+  .ow-hero-glow {
+    background-image:
+      radial-gradient(
+        circle at 20% 10%,
+        color-mix(in oklab, var(--ow-orange) 22%, transparent),
+        transparent 24rem
+      ),
+      radial-gradient(
+        circle at 80% 20%,
+        color-mix(in oklab, var(--ow-blue) 18%, transparent),
+        transparent 28rem
+      );
   }
 }
