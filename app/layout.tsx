@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import {
+  Sidebar,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 
 export const metadata: Metadata = {
   title: "OWES - Overwatch Esport Scouting",
@@ -18,7 +22,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="ow-page-bg ow-page-overlay min-h-screen text-foreground">
         <TooltipProvider>
-          <Providers>{children}</Providers>
+          <Providers>
+            <SidebarProvider>
+              <Sidebar />
+              <main>{children}</main>
+            </SidebarProvider>
+          </Providers>
         </TooltipProvider>
       </body>
     </html>
