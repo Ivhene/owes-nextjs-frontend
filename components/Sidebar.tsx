@@ -87,13 +87,13 @@ export function AppSidebar() {
       <SidebarHeader>
         <div
           className={cn(
-            "flex flex-row items-center justify-between text-3xl font-bold hover:cursor-pointer hover:border-ow-border hover:border hover:shadow-ow-border hover:shadow-xl hover:bg-ow-bg-muted",
+            "text-3xl font-bold hover:cursor-pointer hover:border-ow-border hover:border hover:shadow-ow-border hover:shadow-xl hover:bg-ow-bg-muted",
             state === "expanded" ? "p-5" : "p-2",
           )}
           onClick={() => router.push("/")}
         >
           {state === "expanded" ? (
-            <React.Fragment>
+            <div className="flex flex-row items-center justify-between pr-5">
               <Image
                 src="/transparent_logo.png"
                 alt="Logo"
@@ -101,7 +101,7 @@ export function AppSidebar() {
                 height={75}
               />
               OWES
-            </React.Fragment>
+            </div>
           ) : (
             <Image
               src="/transparent_logo.png"
