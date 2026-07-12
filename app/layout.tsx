@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/Sidebar";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 
 export const metadata: Metadata = {
   title: "OWES - Overwatch Esport Scouting",
@@ -20,12 +20,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.className}`} suppressHydrationWarning>
-      <body className="ow-page-bg ow-page-overlay min-h-screen text-ow-text">
+      <body className="ow-page-bg ow-page-overlay flex min-h-0 overflow-hidden text-ow-text p-8 w-full">
         <TooltipProvider>
           <Providers>
             <SidebarProvider>
               <AppSidebar />
-              <main>{children}</main>
+              <main className="flex-1 w-full max-h-[93vh] overflow-auto">
+                {children}
+              </main>
             </SidebarProvider>
           </Providers>
         </TooltipProvider>
