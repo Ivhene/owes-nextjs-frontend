@@ -1,7 +1,8 @@
 "use client";
 
 import { Hero } from "@/lib/types";
-import { use } from "react";
+import { use, useState } from "react";
+import { HeroTierListDialog } from "./HeroTierListDialog";
 import { HeroCard } from "./HeroCard";
 
 type HeroesGridProps = {
@@ -10,6 +11,8 @@ type HeroesGridProps = {
 
 export function HeroesGrid({ heroes }: HeroesGridProps) {
   const heroesData = use(heroes);
+  const [selectedHero, setSelectedHero] = useState<Hero | null>(null);
+  const [tierListOpen, setTierListOpen] = useState(false);
 
   const tanks = heroesData
     .filter((hero) => hero.role.role_name === "Tank")
@@ -43,7 +46,7 @@ export function HeroesGrid({ heroes }: HeroesGridProps) {
   ];
 
   return (
-    <div className="w-full overflow-x-auto pb-2 flex flex-row items-center justify-center h-full">
+    <div className="flex h-full w-full flex-row items-center justify-center overflow-x-auto pb-2">
       <div className="grid min-w-270 grid-cols-1 gap-6 xl:grid-cols-4">
         {sections.map((section) => (
           <section
@@ -64,12 +67,25 @@ export function HeroesGrid({ heroes }: HeroesGridProps) {
 
             <div className={`grid gap-3 ${section.columnsClass}`}>
               {section.heroes.map((hero) => (
-                <HeroCard key={hero.hero_id} hero={hero} />
+                <HeroCard
+                  key={hero.hero_id}
+                  hero={hero}
+                  onClick={() => {
+                    setSelectedHero(hero);
+                    setTierListOpen(true);
+                  }}
+                />
               ))}
             </div>
           </section>
         ))}
       </div>
+
+      <HeroTierListDialog
+        open={tierListOpen}
+        onOpenChange={setTierListOpen}
+        selectedHero={selectedHero}
+      />
     </div>
   );
 }
