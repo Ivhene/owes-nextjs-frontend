@@ -1,3 +1,14 @@
+import { PlayersLoading } from "@/components/players/loading";
+import { PlayersList } from "@/components/players/PlayersList";
+import { getPlayers } from "@/lib/API";
+import { Suspense } from "react";
+
 export default function PlayersPage() {
-  return <div>Players</div>;
+  const players = getPlayers();
+
+  return (
+    <Suspense fallback={<PlayersLoading />}>
+      <PlayersList players={players} />
+    </Suspense>
+  );
 }

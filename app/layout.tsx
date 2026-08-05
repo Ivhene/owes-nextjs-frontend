@@ -20,13 +20,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.className}`} suppressHydrationWarning>
-      <body className="ow-page-bg ow-page-overlay flex min-h-0 overflow-hidden text-ow-text p-8 w-full">
+      <body className="ow-page-bg ow-page-overlay flex min-h-0 overflow-hidden text-ow-text w-full">
         <TooltipProvider>
           <Providers>
             <SidebarProvider>
               <AppSidebar />
-              <main className="flex-1 w-full max-h-[93vh] overflow-auto">
-                {children}
+              <main className="flex-1 w-full min-h-0 overflow-auto">
+                <div className="min-h-full p-8">{children}</div>
               </main>
             </SidebarProvider>
           </Providers>
