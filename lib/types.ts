@@ -21,6 +21,7 @@ export type Player = {
   player_image: string | null;
   native_region: string;
   current_team: Team | null;
+  ratings: Rating[] | null;
 };
 
 export type Team = {
@@ -32,7 +33,7 @@ export type Team = {
 
 export type Rating = {
   rating_id: number;
-  rating: string;
+  ratings: string;
   hero: Hero | null;
   player: Player | null;
   rating_user: string | null;

@@ -1,5 +1,6 @@
 import { Player } from "@/lib/types";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 type PlayerCardProps = {
   player: Player;
@@ -8,8 +9,13 @@ type PlayerCardProps = {
 export function PlayerCard({ player }: PlayerCardProps) {
   const teamLogo = player.current_team?.team_image ?? "/transparent_logo.png";
 
+  const router = useRouter();
+
   return (
-    <article className="group relative overflow-hidden rounded-xl border border-ow-border/70 bg-ow-bg-deep/95 text-left shadow-[0_10px_22px_rgba(15,23,42,0.16)] transition duration-200 hover:-translate-y-0.5 hover:border-ow-orange/60 hover:shadow-[0_14px_28px_rgba(249,158,26,0.14)]">
+    <article
+      onClick={() => router.push(`/players/${player.player_id}`)}
+      className="group relative overflow-hidden rounded-xl border border-ow-border/70 bg-ow-bg-deep/95 text-left shadow-[0_10px_22px_rgba(15,23,42,0.16)] transition duration-200 hover:-translate-y-0.5 hover:border-ow-orange/60 hover:shadow-[0_14px_28px_rgba(249,158,26,0.14)]"
+    >
       <div className="relative aspect-[4/5] w-full overflow-hidden bg-ow-bg-muted">
         {player.player_image ? (
           <Image

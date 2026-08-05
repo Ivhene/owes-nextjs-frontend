@@ -21,3 +21,12 @@ export async function getPlayers(): Promise<Player[]> {
   const data = await response.json();
   return data;
 }
+
+export async function getPlayerById(playerId: number): Promise<Player> {
+  const response = await fetch(`${API_URL}/players/${playerId}`, {
+    method: "GET",
+    cache: "no-store",
+  });
+  const data = await response.json();
+  return data;
+}
