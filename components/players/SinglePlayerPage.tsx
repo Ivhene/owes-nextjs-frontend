@@ -1,11 +1,12 @@
 "use client";
 
-import { Player } from "@/lib/types";
+import { ErrorMessage } from "@/components/ErrorMessage";
+import { ApiResult, Player } from "@/lib/types";
 import Image from "next/image";
 import { use } from "react";
 
 type SinglePlayerPageProps = {
-  playerPromise: Promise<Player>;
+  playerPromise: Promise<ApiResult<Player>>;
 };
 
 const ratingOrder: Record<string, number> = {
@@ -41,7 +42,13 @@ function formatBirthday(birthday: string | null) {
 }
 
 export function SinglePlayerPage({ playerPromise }: SinglePlayerPageProps) {
-  const player = use(playerPromise);
+  const result = use(playerPromise);
+
+  if (!result.ok) {
+    return <ErrorMessage title="Player unavailable" message={result.error} />;
+  }
+
+  const player = result.data;
 
   const teamLogo = player.current_team?.team_image ?? "/transparent_logo.png";
   const sortedRatings = (player.ratings ?? [])

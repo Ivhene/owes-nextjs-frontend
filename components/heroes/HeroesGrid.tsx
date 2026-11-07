@@ -1,18 +1,25 @@
 "use client";
 
-import { Hero } from "@/lib/types";
+import { ErrorMessage } from "@/components/ErrorMessage";
+import { ApiResult, Hero } from "@/lib/types";
 import { use, useState } from "react";
 import { HeroTierListDialog } from "./HeroTierListDialog";
 import { HeroCard } from "./HeroCard";
 
 type HeroesGridProps = {
-  heroes: Promise<Hero[]>;
+  heroes: Promise<ApiResult<Hero[]>>;
 };
 
 export function HeroesGrid({ heroes }: HeroesGridProps) {
-  const heroesData = use(heroes);
+  const result = use(heroes);
   const [selectedHero, setSelectedHero] = useState<Hero | null>(null);
   const [tierListOpen, setTierListOpen] = useState(false);
+
+  if (!result.ok) {
+    return <ErrorMessage title="Heroes unavailable" message={result.error} />;
+  }
+
+  const heroesData = result.data;
 
   const tanks = heroesData
     .filter((hero) => hero.role.role_name === "Tank")

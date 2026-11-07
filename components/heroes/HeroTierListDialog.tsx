@@ -55,6 +55,12 @@ const tiers: TierConfig[] = [
     rowClassName: "border-ow-gray-dark/40 bg-ow-gray-dark/10",
   },
   {
+    label: "E",
+    name: "E Tier",
+    labelClassName: "bg-ow-gray-dark/80 text-ow-white",
+    rowClassName: "border-ow-gray-dark/30 bg-ow-gray-dark/5",
+  },
+  {
     label: "F",
     name: "F Tier",
     labelClassName: "bg-ow-danger text-ow-white",

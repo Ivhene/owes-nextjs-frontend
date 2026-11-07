@@ -10,23 +10,14 @@ Agent-facing specification for the **OWES - Overwatch Esport Scouting** frontend
 - API and type definitions live in [lib/API.ts](./lib/API.ts) (fetch functions) and [lib/types.ts](./lib/types.ts) (types). Read these first.
 - **Swagger response schemas are incomplete/inaccurate** (e.g. its `Player` has `player_role: int` while real responses return a nested `role` object). Use Swagger for routes, request bodies and enums; verify response shapes against the real response and [lib/types.ts](./lib/types.ts).
 
-### Known endpoints (from Swagger)
-
-| Method | Route |
-|---|---|
-| GET | `/heroes`, `/heroes/{heroID}` |
-| GET, POST | `/players` |
-| GET, PUT, DELETE | `/players/{playerID}` |
-| GET, POST | `/teams` |
-| GET, PUT, DELETE | `/teams/{teamID}` |
-
-Only `/heroes`, `/players` and `/players/{id}` are used by the frontend so far.
+Always check Swagger yourself for the current routes; this file does not list them.
 
 Enums: `Regions` = `na | emea | japan | korea | pacific`; `Ratings` = `s | a | b | c | d | e | f` (lowercase on the wire).
 
 ## 1. Project overview
 
-- Next.js App Router scouting dashboard reading from an external REST API. No backend code in this repo.
+- Next.js App Router app where individuals rate Overwatch esport players on heroes while watching Overwatch esports. Ratings are purely subjective (what the user feels, not derived from stats); the goal is to encourage paying extra attention while watching. A player always has one role but can be rated on heroes from any role.
+- Reads from an external REST API. No backend code in this repo.
 - Pages: Home (placeholder), Players list, Player detail, Heroes grid with tier-list dialog, Teams (placeholder).
 
 ## 2. Tech stack
@@ -89,6 +80,7 @@ Where to put things:
 - Feature components: PascalCase files (`HeroCard.tsx`). `components/ui/` and `hooks/`: kebab-case.
 - Props typed with a local `type XProps = {...}` above the component.
 - Add `"use client"` only to components that use hooks/`use()`/browser APIs.
+- Everything in [components/ui/](./components/ui) is a shadcn component added via the shadcn CLI (see [components.json](./components.json)). Do not hand-write new primitives in that style. Add new ones with the shadcn CLI, then adapt only if needed.
 
 ### 5.3 Data fetching: promise-passing pattern
 1. A server page calls a `lib/API.ts` function **without awaiting** (e.g. [app/heroes/page.tsx](./app/heroes/page.tsx)).
@@ -100,9 +92,14 @@ Do not `await` in the page for this pattern, or the Suspense fallback never show
 
 ### 5.4 API layer ([lib/API.ts](./lib/API.ts))
 - Base URL from `process.env.API_URL`.
-- All calls go through the internal `fetchJson<T>()` helper, which throws on non-2xx responses. New functions should use it.
-- Caching: lists use `cache: "force-cache"` with `next: { revalidate: 1200, tags: [...] }`; single-item fetches use `cache: "no-store"`.
-- There is no `error.tsx` yet, so a thrown API error shows Next's default error UI.
+- All calls go through the internal `fetchJson<T>()` helper. **API functions never throw.** They return `ApiResult<T>` (`{ ok: true, data } | { ok: false, error }`, defined in [lib/types.ts](./lib/types.ts)), where `error` is a user-facing message describing what went wrong (API unreachable, not found, server error, unreadable response). New functions must follow this.
+- Consumers check `result.ok` and render `<ErrorMessage>` ([components/ErrorMessage.tsx](./components/ErrorMessage.tsx)) with `result.error` when it is false. Never let an API failure crash the page.
+- **Caching rule:** every GET uses `cache: "force-cache"` with `next: { revalidate: 1200, tags: [...] }`. Do not use `cache: "no-store"`.
+  - Tags identify the resource (`heroes`, `players`, and per-item tags such as `player-<id>` when a single item is fetched).
+- **Mutation rule:** every create, update or delete must invalidate **all** cache tags that the affected data could appear under (e.g. updating a player invalidates `players` and `player-<id>`, and `heroes` too if the change touches hero ratings). Invalidation must **immediately trigger a refetch** (use `updateTag`/`revalidateTag` or the equivalent Next 16 API that refreshes right away, not a lazy revalidate on the next visit).
+- Mutations are not implemented yet; follow these rules when adding them.
+- `getPlayerById` follows the caching rule (tag `player-<id>`). A mutation of a player must also invalidate `players` and `player-<id>`.
+- [app/error.tsx](./app/error.tsx) is the global fallback for unexpected render errors (with a "Try again" button).
 
 ### 5.5 Types ([lib/types.ts](./lib/types.ts))
 - Use `type` (not `interface`). Nullable fields are `T | null`.
@@ -144,13 +141,11 @@ Do not `await` in the page for this pattern, or the Suspense fallback never show
 ## 8. Domain notes
 
 - **Roles**: `Tank`, `Damage`, `Support`. [components/heroes/HeroesGrid.tsx](./components/heroes/HeroesGrid.tsx) filters on these exact `role_name` strings.
-- **Ratings**: letter grades S-F, lowercase from the API; UI compares with `toUpperCase()`. The tier list dialog ([components/heroes/HeroTierListDialog.tsx](./components/heroes/HeroTierListDialog.tsx)) shows S, A, B, C, D, F (no E row); [components/players/SinglePlayerPage.tsx](./components/players/SinglePlayerPage.tsx) knows S-F.
+- **Ratings**: letter grades S, A, B, C, D, E, F, lowercase from the API; UI compares with `toUpperCase()`. The tier list dialog ([components/heroes/HeroTierListDialog.tsx](./components/heroes/HeroTierListDialog.tsx)) has a row for every grade, including E; [components/players/SinglePlayerPage.tsx](./components/players/SinglePlayerPage.tsx) knows S-F.
 - Players have an optional `current_team`.
-- A nonexistent player id (e.g. `/players/1` when absent) makes the backend return a 500; the frontend now throws on this.
+- A nonexistent player id makes the backend return a 500; the frontend shows this as a readable error message (see 5.4). Do not assume specific ids exist (the lowest current player id is 3).
+- The frontend dev server runs on `http://localhost:3000`.
 
 ## 9. Open questions for the owner
 
-1. **Font**: `app/layout.tsx` uses `Inter`; confirm it is final.
-2. **Tier list has no `E` row** while ratings allow `e`; confirm whether `E` ratings should be shown.
-3. **Error UI**: add `app/error.tsx` / not-found handling for failed or missing API data?
-4. **Layout metadata description** is still "Generated by create next app".
+None at the moment. The font (`Inter`, any normal font is fine) and the layout metadata description are settled.

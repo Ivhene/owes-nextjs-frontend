@@ -10,15 +10,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Player } from "@/lib/types";
+import { ErrorMessage } from "@/components/ErrorMessage";
+import { ApiResult, Player } from "@/lib/types";
 import { PlayerCard } from "./PlayerCard";
 
 type PlayersListProps = {
-  players: Promise<Player[]>;
+  players: Promise<ApiResult<Player[]>>;
 };
 
+const noPlayers: Player[] = [];
+
 export function PlayersList({ players }: PlayersListProps) {
-  const playersData = use(players);
+  const result = use(players);
+  const playersData = result.ok ? result.data : noPlayers;
 
   const [search, setSearch] = useState("");
   const [regionFilter, setRegionFilter] = useState("all");
@@ -72,6 +76,10 @@ export function PlayersList({ players }: PlayersListProps) {
 
   const controlClassName =
     "h-8 w-full rounded-xl border-ow-border/70 bg-ow-bg-deep/70 px-2.5 py-1 text-ow-text placeholder:text-ow-text/45";
+
+  if (!result.ok) {
+    return <ErrorMessage title="Players unavailable" message={result.error} />;
+  }
 
   return (
     <div className="flex h-full w-full flex-col gap-6 overflow-hidden">

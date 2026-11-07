@@ -1,6 +1,8 @@
 # OWES - Overwatch Esport Scouting (Frontend)
 
-Next.js frontend for scouting Overwatch esport players. It lists players and heroes, shows per-player hero ratings, and a per-hero player tier list. All data comes from the OWES backend API.
+Next.js frontend where individuals rate Overwatch esport players on heroes while watching Overwatch esports. Ratings are subjective: they reflect only what the user feels, and are meant to encourage paying extra attention to the games. A player always has a role but can be rated on heroes from any role.
+
+It lists players and heroes, shows per-player hero ratings, and a per-hero player tier list. All data comes from the OWES backend API.
 
 See [SPEC.md](./SPEC.md) for conventions and a map of the codebase (also intended for AI agents).
 

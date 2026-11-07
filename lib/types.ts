@@ -1,3 +1,7 @@
+export type ApiResult<T> =
+  | { ok: true; data: T }
+  | { ok: false; error: string };
+
 export type Hero = {
   hero_id: number;
   hero_name: string;
