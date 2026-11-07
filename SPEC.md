@@ -18,7 +18,7 @@ Enums: `Regions` = `na | emea | japan | korea | pacific`; `Ratings` = `s | a | b
 
 - Next.js App Router app where individuals rate Overwatch esport players on heroes while watching Overwatch esports. Ratings are purely subjective (what the user feels, not derived from stats); the goal is to encourage paying extra attention while watching. A player always has one role but can be rated on heroes from any role.
 - Reads from an external REST API. No backend code in this repo.
-- Pages: Home (placeholder), Players list, Player detail, Heroes grid with tier-list dialog, Teams (placeholder).
+- Pages: Home (placeholder), Players list, Player detail, Heroes grid with tier-list dialog, Teams list, Team detail.
 
 ## 2. Tech stack
 
@@ -51,12 +51,13 @@ Validation after changes: `npm run lint` and `npx tsc --noEmit` (and `npm run bu
 | [app/layout.tsx](./app/layout.tsx) | Root layout: providers, `TooltipProvider`, `SidebarProvider`, `AppSidebar`, metadata |
 | [app/providers.ts](./app/providers.ts) | Client `Providers` wrapper (`ThemeProvider`) |
 | [app/globals.css](./app/globals.css) | Tailwind import, shadcn theme variables, `--ow-*` brand tokens |
-| [components/](./components) | Feature components grouped by domain (`heroes/`, `players/`) |
+| [components/](./components) | Feature components grouped by domain (`heroes/`, `players/`, `teams/`), plus shared `ErrorMessage.tsx` |
 | [components/Sidebar.tsx](./components/Sidebar.tsx) | Navigation sidebar; collapse state in `localStorage` key `owes-sidebar-state` |
 | [components/ui/](./components/ui) | Generic shadcn/Radix primitives |
 | [lib/API.ts](./lib/API.ts) | **All backend fetch functions** |
 | [lib/types.ts](./lib/types.ts) | **All API/domain types** |
 | [lib/utils.ts](./lib/utils.ts) | `cn()` (`clsx` + `tailwind-merge`) |
+| [lib/ratings.ts](./lib/ratings.ts) | Rating tiers S-F: order and colors, shared by the hero tier list and player ratings |
 | [hooks/](./hooks) | Shared hooks (`use-mobile.ts`) |
 | [public/](./public) | Static assets: logos, role icons |
 | [next.config.ts](./next.config.ts) | Allowed remote image hosts |
@@ -113,7 +114,7 @@ Do not `await` in the page for this pattern, or the Suspense fallback never show
 
 ### 5.7 Images
 - Use `next/image`. Remote hosts must be in `images.remotePatterns` in [next.config.ts](./next.config.ts) (currently `static.wikia.nocookie.net`, `d15f34w2p8l1cc.cloudfront.net`, `cdn.discordapp.com`, all https).
-- Fallback image: `/transparent_logo.png`. Role icons are served from `public/` (e.g. `/Tank_icon.svg`).
+- Fallback image: `/transparent_logo.png`, drawn with `object-contain` over the gradient background, for players and teams without an image. Role icons are served from `public/` (e.g. `/Tank_icon.svg`).
 
 ### 5.8 Comments
 - Only comment code that needs clarification.
@@ -136,13 +137,15 @@ Do not `await` in the page for this pattern, or the Suspense fallback never show
 | `/players` | [app/players/page.tsx](./app/players/page.tsx) | `getPlayers()` | Search + region/role/team filters |
 | `/players/[playerId]` | [app/players/[playerId]/page.tsx](./app/players/[playerId]/page.tsx) | `getPlayerById()` | Profile, team, ratings by hero |
 | `/heroes` | [app/heroes/page.tsx](./app/heroes/page.tsx) | `getHeroes()` | Grid by role, tier-list dialog |
-| `/teams` | [app/teams/page.tsx](./app/teams/page.tsx) | none | Placeholder (intentionally unfinished; `/teams` API exists) |
+| `/teams` | [app/teams/page.tsx](./app/teams/page.tsx) | `getTeams()` | Search + region filter, cards link to team detail |
+| `/teams/[teamId]` | [app/teams/[teamId]/page.tsx](./app/teams/[teamId]/page.tsx) | `getTeamById()` | Team info + roster table; each row links to the player page |
 
 ## 8. Domain notes
 
 - **Roles**: `Tank`, `Damage`, `Support`. [components/heroes/HeroesGrid.tsx](./components/heroes/HeroesGrid.tsx) filters on these exact `role_name` strings.
 - **Ratings**: letter grades S, A, B, C, D, E, F, lowercase from the API; UI compares with `toUpperCase()`. The tier list dialog ([components/heroes/HeroTierListDialog.tsx](./components/heroes/HeroTierListDialog.tsx)) has a row for every grade, including E; [components/players/SinglePlayerPage.tsx](./components/players/SinglePlayerPage.tsx) knows S-F.
-- Players have an optional `current_team`.
+- Players have an optional `current_team`. Teams from `/teams` and `/teams/{id}` include a `players` array (nested players have no `current_team`).
+- The API omits null fields from JSON (e.g. `team_image`, `player_image`), so treat them as possibly `undefined` too: use `??` fallbacks rather than `!== null` checks.
 - A nonexistent player id makes the backend return a 500; the frontend shows this as a readable error message (see 5.4). Do not assume specific ids exist (the lowest current player id is 3).
 - The frontend dev server runs on `http://localhost:3000`.
 

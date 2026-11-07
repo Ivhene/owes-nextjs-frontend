@@ -17,17 +17,17 @@ export function PlayerCard({ player }: PlayerCardProps) {
       className="group relative overflow-hidden rounded-xl border border-ow-border/70 bg-ow-bg-deep/95 text-left shadow-[0_10px_22px_rgba(15,23,42,0.16)] transition duration-200 hover:-translate-y-0.5 hover:border-ow-orange/60 hover:shadow-[0_14px_28px_rgba(249,158,26,0.14)]"
     >
       <div className="relative aspect-[4/5] w-full overflow-hidden bg-ow-bg-muted">
-        {player.player_image ? (
-          <Image
-            src={player.player_image}
-            alt={player.gamertag}
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1280px) 33vw, 25vw"
-            className="object-cover object-center transition duration-200 group-hover:scale-[1.04]"
-          />
-        ) : (
-          <div className="absolute inset-0 bg-linear-to-br from-ow-bg-muted via-ow-bg-deep to-ow-bg-muted" />
-        )}
+        <div className="absolute inset-0 bg-linear-to-br from-ow-bg-muted via-ow-bg-deep to-ow-bg-muted" />
+
+        <Image
+          src={player.player_image ?? "/transparent_logo.png"}
+          alt={player.gamertag}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1280px) 33vw, 25vw"
+          className={`transition duration-200 group-hover:scale-[1.04] ${
+            player.player_image ? "object-cover object-center" : "object-contain p-6"
+          }`}
+        />
 
         <div className="absolute inset-0 bg-linear-to-t from-ow-bg-deep/92 via-ow-bg-deep/18 to-transparent" />
 

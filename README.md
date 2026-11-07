@@ -54,7 +54,7 @@ Next.js (App Router), React 19, TypeScript, Tailwind CSS v4, shadcn/ui (Radix), 
 | Path           | Contents                                                        |
 | -------------- | --------------------------------------------------------------- |
 | `app/`         | Routes, root layout, global styles and theme tokens             |
-| `components/`  | Feature components (`heroes/`, `players/`) and `ui/` primitives |
+| `components/`  | Feature components (`heroes/`, `players/`, `teams/`) and `ui/` primitives |
 | `lib/API.ts`   | Backend fetch functions                                         |
 | `lib/types.ts` | API/domain types                                                |
 | `hooks/`       | Shared React hooks                                              |

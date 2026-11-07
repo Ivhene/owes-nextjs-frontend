@@ -33,6 +33,8 @@ export type Team = {
   team_name: string;
   team_image: string | null;
   competing_region: string;
+  // Only present on /teams responses; nested players have no current_team
+  players?: Player[] | null;
 };
 
 export type Rating = {

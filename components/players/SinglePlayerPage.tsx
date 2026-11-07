@@ -1,32 +1,13 @@
 "use client";
 
 import { ErrorMessage } from "@/components/ErrorMessage";
+import { getRatingRank, getRatingTier } from "@/lib/ratings";
 import { ApiResult, Player } from "@/lib/types";
 import Image from "next/image";
 import { use } from "react";
 
 type SinglePlayerPageProps = {
   playerPromise: Promise<ApiResult<Player>>;
-};
-
-const ratingOrder: Record<string, number> = {
-  S: 0,
-  A: 1,
-  B: 2,
-  C: 3,
-  D: 4,
-  E: 5,
-  F: 6,
-};
-
-const ratingBadgeClassName: Record<string, string> = {
-  S: "border-ow-orange/50 bg-ow-orange/15 text-ow-orange",
-  A: "border-ow-blue/50 bg-ow-blue/15 text-ow-blue",
-  B: "border-ow-blue-muted/50 bg-ow-blue-muted/15 text-ow-text",
-  C: "border-ow-border-strong/50 bg-ow-border/20 text-ow-text",
-  D: "border-ow-border/50 bg-ow-border/10 text-ow-muted",
-  E: "border-ow-border/50 bg-ow-border/10 text-ow-muted",
-  F: "border-ow-danger/40 bg-ow-danger/10 text-ow-danger",
 };
 
 function formatBirthday(birthday: string | null) {
@@ -54,8 +35,8 @@ export function SinglePlayerPage({ playerPromise }: SinglePlayerPageProps) {
   const sortedRatings = (player.ratings ?? [])
     .filter((rating) => rating.hero !== null)
     .sort((left, right) => {
-      const leftRank = ratingOrder[left.ratings.toUpperCase()] ?? 99;
-      const rightRank = ratingOrder[right.ratings.toUpperCase()] ?? 99;
+      const leftRank = getRatingRank(left.ratings);
+      const rightRank = getRatingRank(right.ratings);
 
       if (leftRank !== rightRank) {
         return leftRank - rightRank;
@@ -99,10 +80,10 @@ export function SinglePlayerPage({ playerPromise }: SinglePlayerPageProps) {
                 <tbody>
                   {sortedRatings.map((rating, index) => {
                     const hero = rating.hero;
-                    const ratingLabel = rating.ratings.toUpperCase();
+                    const ratingLabel = rating.ratings.trim().toUpperCase();
                     const badgeClassName =
-                      ratingBadgeClassName[ratingLabel] ??
-                      "border-ow-border/50 bg-ow-border/10 text-ow-text";
+                      getRatingTier(rating.ratings)?.labelClassName ??
+                      "bg-ow-border/10 text-ow-text";
 
                     return (
                       <tr
@@ -140,7 +121,7 @@ export function SinglePlayerPage({ playerPromise }: SinglePlayerPageProps) {
                         </td>
                         <td className="border-b border-ow-border/50 px-5 py-3 text-right sm:px-6">
                           <span
-                            className={`inline-flex min-w-12 justify-center rounded-full border px-3 py-1 text-sm font-extrabold tracking-[0.18em] ${badgeClassName}`}
+                            className={`inline-flex min-w-12 justify-center rounded-full border border-transparent px-3 py-1 text-sm font-extrabold tracking-[0.18em] ${badgeClassName}`}
                           >
                             {ratingLabel}
                           </span>
@@ -157,17 +138,19 @@ export function SinglePlayerPage({ playerPromise }: SinglePlayerPageProps) {
 
       <aside className="lg:sticky lg:top-6 h-fit rounded-3xl border border-ow-border/70 bg-ow-bg-deep/60 shadow-[0_18px_44px_rgba(15,23,42,0.16)] backdrop-blur-sm">
         <div className="relative aspect-square overflow-hidden rounded-t-3xl bg-ow-bg-muted">
-          {player.player_image ? (
-            <Image
-              src={player.player_image}
-              alt={player.gamertag}
-              fill
-              sizes="(max-width: 1024px) 100vw, 360px"
-              className="object-cover object-center"
-            />
-          ) : (
-            <div className="absolute inset-0 bg-linear-to-br from-ow-bg-muted via-ow-bg-deep to-ow-bg-muted" />
-          )}
+          <div className="absolute inset-0 bg-linear-to-br from-ow-bg-muted via-ow-bg-deep to-ow-bg-muted" />
+
+          <Image
+            src={player.player_image ?? "/transparent_logo.png"}
+            alt={player.gamertag}
+            fill
+            sizes="(max-width: 1024px) 100vw, 360px"
+            className={
+              player.player_image
+                ? "object-cover object-center"
+                : "object-contain p-10"
+            }
+          />
 
           <div className="absolute inset-0 bg-linear-to-t from-ow-bg-deep/92 via-ow-bg-deep/20 to-transparent" />
 

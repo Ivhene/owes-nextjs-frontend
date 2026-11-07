@@ -1,4 +1,4 @@
-import { ApiResult, Hero, Player } from "./types";
+import { ApiResult, Hero, Player, Team } from "./types";
 
 const API_URL = process.env.API_URL;
 
@@ -70,5 +70,25 @@ export async function getPlayerById(
     method: "GET",
     cache: "force-cache",
     next: { revalidate: 1200, tags: [`player-${playerId}`] },
+  });
+}
+
+export function getTeams(): Promise<ApiResult<Team[]>> {
+  return fetchJson<Team[]>("/teams", "Teams", {
+    method: "GET",
+    cache: "force-cache",
+    next: { revalidate: 1200, tags: ["teams"] },
+  });
+}
+
+export async function getTeamById(teamId: number): Promise<ApiResult<Team>> {
+  if (!Number.isInteger(teamId)) {
+    return { ok: false, error: "The team id in the URL is not valid." };
+  }
+
+  return fetchJson<Team>(`/teams/${teamId}`, "Team", {
+    method: "GET",
+    cache: "force-cache",
+    next: { revalidate: 1200, tags: [`team-${teamId}`] },
   });
 }
