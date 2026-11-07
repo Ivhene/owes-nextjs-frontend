@@ -16,7 +16,7 @@ export type Player = {
   player_id: number;
   gamertag: string;
   real_name: string | null;
-  birthday: Date | null;
+  birthday: string | null;
   role: Role;
   player_image: string | null;
   native_region: string;

@@ -28,7 +28,7 @@ const ratingBadgeClassName: Record<string, string> = {
   F: "border-ow-danger/40 bg-ow-danger/10 text-ow-danger",
 };
 
-function formatBirthday(birthday: Date | null) {
+function formatBirthday(birthday: string | null) {
   if (!birthday) {
     return "Unknown";
   }

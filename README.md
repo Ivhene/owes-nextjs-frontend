@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# OWES - Overwatch Esport Scouting (Frontend)
 
-## Getting Started
+Next.js frontend for scouting Overwatch esport players. It lists players and heroes, shows per-player hero ratings, and a per-hero player tier list. All data comes from the OWES backend API.
 
-First, run the development server:
+See [SPEC.md](./SPEC.md) for conventions and a map of the codebase (also intended for AI agents).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Requirements
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Node.js 20+
+- The OWES backend API running locally (Swagger UI at [http://localhost:5032/swagger](http://localhost:5032/swagger))
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Install dependencies:
 
-## Learn More
+   ```bash
+   npm install
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. Create a `.env.local` file in the project root (see `.env` for the template):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```bash
+   API_URL=https://localhost:7080
+   NODE_TLS_REJECT_UNAUTHORIZED=0
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   `NODE_TLS_REJECT_UNAUTHORIZED=0` accepts the self-signed development certificate. Use it for local development only.
 
-## Deploy on Vercel
+3. Start the dev server:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   npm run dev
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   Open [http://localhost:3000](http://localhost:3000).
+
+## Scripts
+
+| Command         | Description                                  |
+| --------------- | -------------------------------------------- |
+| `npm run dev`   | Start the development server                 |
+| `npm run build` | Create a production build (also type-checks) |
+| `npm run start` | Serve the production build                   |
+| `npm run lint`  | Run ESLint                                   |
+
+## Tech stack
+
+Next.js (App Router), React 19, TypeScript, Tailwind CSS v4, shadcn/ui (Radix), lucide-react, next-themes.
+
+## Project structure
+
+| Path           | Contents                                                        |
+| -------------- | --------------------------------------------------------------- |
+| `app/`         | Routes, root layout, global styles and theme tokens             |
+| `components/`  | Feature components (`heroes/`, `players/`) and `ui/` primitives |
+| `lib/API.ts`   | Backend fetch functions                                         |
+| `lib/types.ts` | API/domain types                                                |
+| `hooks/`       | Shared React hooks                                              |
+| `public/`      | Static assets                                                   |

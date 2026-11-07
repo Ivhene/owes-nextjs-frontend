@@ -2,31 +2,37 @@ import { Hero, Player } from "./types";
 
 const API_URL = process.env.API_URL;
 
-export async function getHeroes(): Promise<Hero[]> {
-  const response = await fetch(`${API_URL}/heroes`, {
+async function fetchJson<T>(path: string, init: RequestInit): Promise<T> {
+  const response = await fetch(`${API_URL}${path}`, init);
+
+  if (!response.ok) {
+    throw new Error(
+      `API request failed: ${init.method ?? "GET"} ${path} (${response.status} ${response.statusText})`,
+    );
+  }
+
+  return response.json();
+}
+
+export function getHeroes(): Promise<Hero[]> {
+  return fetchJson<Hero[]>("/heroes", {
     method: "GET",
     cache: "force-cache",
     next: { revalidate: 1200, tags: ["heroes"] },
   });
-  const data = await response.json();
-  return data;
 }
 
-export async function getPlayers(): Promise<Player[]> {
-  const response = await fetch(`${API_URL}/players`, {
+export function getPlayers(): Promise<Player[]> {
+  return fetchJson<Player[]>("/players", {
     method: "GET",
     cache: "force-cache",
     next: { revalidate: 1200, tags: ["players"] },
   });
-  const data = await response.json();
-  return data;
 }
 
-export async function getPlayerById(playerId: number): Promise<Player> {
-  const response = await fetch(`${API_URL}/players/${playerId}`, {
+export function getPlayerById(playerId: number): Promise<Player> {
+  return fetchJson<Player>(`/players/${playerId}`, {
     method: "GET",
     cache: "no-store",
   });
-  const data = await response.json();
-  return data;
 }

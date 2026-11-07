@@ -116,11 +116,7 @@ export function HeroTierListDialog({
 }: HeroTierListDialogProps) {
   const ratings = selectedHero?.ratings ?? [];
 
-  const getRatingTier = (rating: Rating) => {
-    const source = rating as Rating & { ratings?: string };
-
-    return (source.rating ?? source.ratings ?? "").trim().toUpperCase();
-  };
+  const getRatingTier = (rating: Rating) => rating.ratings.trim().toUpperCase();
 
   const playersByTier = tiers.map((tier) => {
     const players = Array.from(
