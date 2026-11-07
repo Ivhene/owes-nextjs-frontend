@@ -36,29 +36,32 @@ export function HeroesGrid({ heroes }: HeroesGridProps) {
       title: "Tank",
       accent: "from-ow-blue to-ow-blue-muted",
       heroes: tanks,
-      columnsClass: "grid-cols-3",
+      columnsClass:
+        "grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-2 2xl:grid-cols-3",
     },
     {
       title: "Damage",
       accent: "from-ow-orange to-ow-orange-dark",
       heroes: dps,
-      columnsClass: "grid-cols-6",
+      columnsClass:
+        "grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-4 2xl:grid-cols-6",
     },
     {
       title: "Support",
       accent: "from-ow-success to-ow-blue",
       heroes: supports,
-      columnsClass: "grid-cols-3",
+      columnsClass:
+        "grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-2 2xl:grid-cols-3",
     },
   ];
 
   return (
-    <div className="flex h-full w-full flex-row items-center justify-center overflow-x-auto pb-2">
-      <div className="grid min-w-270 grid-cols-1 gap-6 xl:grid-cols-4">
+    <div className="flex w-full justify-center pb-2">
+      <div className="grid w-full grid-cols-1 gap-4 sm:gap-6 xl:grid-cols-4 xl:gap-4 2xl:gap-6">
         {sections.map((section) => (
           <section
             key={section.title}
-            className={`rounded-2xl border border-ow-border/70 bg-ow-bg-deep/55 p-4 shadow-[0_16px_40px_rgba(15,23,42,0.16)] backdrop-blur-sm ${
+            className={`rounded-2xl border border-ow-border/70 bg-ow-bg-deep/55 p-3 shadow-[0_16px_40px_rgba(15,23,42,0.16)] backdrop-blur-sm sm:p-4 ${
               section.title === "Damage" ? "xl:col-span-2" : "xl:col-span-1"
             }`}
           >
@@ -72,7 +75,7 @@ export function HeroesGrid({ heroes }: HeroesGridProps) {
               <div className="h-px flex-1 bg-linear-to-r from-ow-border/80 to-transparent" />
             </div>
 
-            <div className={`grid gap-3 ${section.columnsClass}`}>
+            <div className={`grid gap-2 sm:gap-3 ${section.columnsClass}`}>
               {section.heroes.map((hero) => (
                 <HeroCard
                   key={hero.hero_id}

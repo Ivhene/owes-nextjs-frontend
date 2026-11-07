@@ -34,9 +34,9 @@ const steps = [
 
 export default function Home() {
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 pb-20">
-      <section className="flex flex-col items-center gap-6 rounded-3xl border border-ow-border/70 bg-ow-bg-deep/55 px-6 py-8 shadow-[0_18px_44px_rgba(15,23,42,0.16)] backdrop-blur-sm sm:flex-row sm:px-8">
-        <div className="relative size-24 shrink-0">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 pb-10 sm:gap-6 sm:pb-20">
+      <section className="flex flex-col items-center gap-4 rounded-2xl border border-ow-border/70 bg-ow-bg-deep/55 px-4 py-6 shadow-[0_18px_44px_rgba(15,23,42,0.16)] backdrop-blur-sm sm:flex-row sm:gap-6 sm:rounded-3xl sm:px-8 sm:py-8">
+        <div className="relative size-16 shrink-0 sm:size-20 lg:size-24">
           <Image
             src="/transparent_logo.png"
             alt="OWES logo"
@@ -47,10 +47,10 @@ export default function Home() {
           />
         </div>
         <div className="text-center sm:text-left">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-ow-text/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ow-text/60 sm:tracking-[0.24em]">
             Overwatch Esport Scouting
           </p>
-          <h1 className="mt-1 text-3xl font-black tracking-tight text-ow-text sm:text-4xl">
+          <h1 className="mt-1 text-2xl font-black tracking-tight text-ow-text sm:text-3xl lg:text-4xl">
             Watch esports with a scout&apos;s eye
           </h1>
           <p className="mt-3 max-w-3xl text-sm font-medium leading-relaxed text-ow-text/75 sm:text-base">
@@ -62,11 +62,11 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="rounded-3xl border border-ow-border/70 bg-ow-bg-deep/55 px-6 py-5 shadow-[0_18px_44px_rgba(15,23,42,0.16)] backdrop-blur-sm sm:px-8">
-        <h2 className="text-sm font-black uppercase tracking-[0.3em] text-ow-text">
+      <section className="rounded-2xl border border-ow-border/70 bg-ow-bg-deep/55 px-4 py-5 shadow-[0_18px_44px_rgba(15,23,42,0.16)] backdrop-blur-sm sm:rounded-3xl sm:px-8">
+        <h2 className="text-sm font-black uppercase tracking-[0.2em] text-ow-text sm:tracking-[0.3em]">
           How it works
         </h2>
-        <ol className="mt-4 grid gap-3 md:grid-cols-3">
+        <ol className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-3">
           {steps.map((step, index) => (
             <li
               key={step}
@@ -87,18 +87,18 @@ export default function Home() {
         </p>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-3">
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
         {sections.map(({ title, href, icon: Icon, description }) => (
           <Link
             key={href}
             href={href}
-            className="group flex flex-col gap-3 rounded-3xl border border-ow-border/70 bg-ow-bg-deep/55 p-6 shadow-[0_18px_44px_rgba(15,23,42,0.16)] backdrop-blur-sm transition duration-200 hover:-translate-y-0.5 hover:border-ow-orange/60 hover:shadow-[0_14px_28px_rgba(249,158,26,0.14)] focus-visible:border-ow-orange/60 focus-visible:outline-none"
+            className="group flex flex-col gap-3 rounded-2xl border border-ow-border/70 bg-ow-bg-deep/55 p-5 shadow-[0_18px_44px_rgba(15,23,42,0.16)] backdrop-blur-sm transition duration-200 hover:-translate-y-0.5 hover:border-ow-orange/60 hover:shadow-[0_14px_28px_rgba(249,158,26,0.14)] focus-visible:border-ow-orange/60 focus-visible:outline-none sm:rounded-3xl sm:p-6 sm:last:col-span-2 md:last:col-span-1 lg:last:col-span-2 xl:last:col-span-1"
           >
             <div className="flex items-center gap-3">
               <span className="flex size-10 items-center justify-center rounded-2xl border border-ow-border/60 bg-ow-bg-deep/40 text-ow-orange">
                 <Icon className="size-5" />
               </span>
-              <h2 className="text-xl font-black tracking-tight text-ow-text">
+              <h2 className="text-lg font-black tracking-tight text-ow-text sm:text-xl">
                 {title}
               </h2>
               <ArrowRight className="ml-auto size-5 text-ow-text/50 transition group-hover:translate-x-1 group-hover:text-ow-orange" />

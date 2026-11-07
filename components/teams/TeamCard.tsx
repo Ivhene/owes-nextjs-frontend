@@ -23,18 +23,18 @@ export function TeamCard({ team }: TeamCardProps) {
           alt={team.team_name}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1280px) 33vw, 25vw"
-          className="object-contain p-6 transition duration-200 group-hover:scale-[1.04]"
+          className="object-contain p-4 transition duration-200 group-hover:scale-[1.04] sm:p-6"
         />
 
         <div className="absolute inset-0 bg-linear-to-t from-ow-bg-deep/92 via-ow-bg-deep/18 to-transparent" />
 
-        <div className="absolute left-2.5 top-2.5 rounded-full border border-white/10 bg-ow-bg-deep/70 px-2.5 py-1 backdrop-blur-sm">
+        <div className="absolute left-2 top-2 rounded-full border border-white/10 bg-ow-bg-deep/70 px-2 py-1 backdrop-blur-sm sm:left-2.5 sm:top-2.5 sm:px-2.5">
           <span className="text-[0.63rem] font-semibold uppercase tracking-[0.14em] text-ow-text/90">
             {team.competing_region}
           </span>
         </div>
 
-        <div className="absolute right-2.5 top-2.5 rounded-full border border-white/10 bg-ow-bg-deep/70 px-2.5 py-1 backdrop-blur-sm">
+        <div className="absolute right-2 top-2 rounded-full border border-white/10 bg-ow-bg-deep/70 px-2 py-1 backdrop-blur-sm sm:right-2.5 sm:top-2.5 sm:px-2.5">
           <span className="text-[0.63rem] font-semibold uppercase tracking-[0.14em] text-ow-text/90">
             {playerCount} {playerCount === 1 ? "player" : "players"}
           </span>

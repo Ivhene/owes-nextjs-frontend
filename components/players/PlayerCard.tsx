@@ -25,7 +25,9 @@ export function PlayerCard({ player }: PlayerCardProps) {
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1280px) 33vw, 25vw"
           className={`transition duration-200 group-hover:scale-[1.04] ${
-            player.player_image ? "object-cover object-center" : "object-contain p-6"
+            player.player_image
+              ? "object-cover object-center"
+              : "object-contain p-4 sm:p-6"
           }`}
         />
 

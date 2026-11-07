@@ -30,7 +30,7 @@ function TierRow({
   return (
     <div
       className={cn(
-        "grid grid-cols-[88px_minmax(0,1fr)] overflow-hidden border shadow-[0_10px_24px_rgba(15,23,42,0.08)]",
+        "grid grid-cols-[56px_minmax(0,1fr)] overflow-hidden border shadow-[0_10px_24px_rgba(15,23,42,0.08)] sm:grid-cols-[88px_minmax(0,1fr)]",
         isFirst && "rounded-t-2xl",
         isLast && "rounded-b-2xl",
         tier.rowClassName,
@@ -42,7 +42,7 @@ function TierRow({
           tier.labelClassName,
         )}
       >
-        <span className="text-lg font-black leading-none tracking-[0.28em]">
+        <span className="text-base font-black leading-none tracking-[0.2em] sm:text-lg sm:tracking-[0.28em]">
           {tier.label}
         </span>
         <span className="sr-only">{tier.name}</span>
@@ -52,7 +52,7 @@ function TierRow({
           {players.map((player) => (
             <span
               key={`${tier.label}-${player}`}
-              className="inline-flex items-center rounded-full border border-ow-border/60 bg-ow-surface px-2.5 py-1 text-sm font-semibold text-ow-text"
+              className="inline-flex items-center rounded-full border border-ow-border/60 bg-ow-surface px-2 py-0.5 text-xs font-semibold text-ow-text sm:px-2.5 sm:py-1 sm:text-sm"
             >
               {player}
             </span>
@@ -89,11 +89,8 @@ export function HeroTierListDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="overflow-hidden p-0"
-        style={{ width: "80vw", maxWidth: "80vw" }}
-      >
-        <div className="flex flex-col bg-linear-to-b from-ow-surface to-ow-bg-deep/90">
+      <DialogContent className="overflow-hidden p-0 sm:max-w-[calc(100%-4rem)] lg:max-w-[80vw]">
+        <div className="flex max-h-[calc(100svh-2rem)] flex-col overflow-y-auto bg-linear-to-b from-ow-surface to-ow-bg-deep/90">
           <DialogHeader className="border-b border-ow-border/60 px-4 py-3">
             <DialogTitle className="text-lg tracking-tight sm:text-xl">
               Player tier list

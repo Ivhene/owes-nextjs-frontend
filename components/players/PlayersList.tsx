@@ -82,9 +82,9 @@ export function PlayersList({ players }: PlayersListProps) {
   }
 
   return (
-    <div className="flex h-full w-full flex-col gap-6 overflow-hidden">
-      <div className="rounded-2xl border border-ow-border/70 bg-ow-bg-deep/55 p-4 shadow-[0_16px_40px_rgba(15,23,42,0.16)] backdrop-blur-sm">
-        <div className="grid gap-3 lg:grid-cols-4">
+    <div className="flex w-full flex-col gap-4 sm:gap-6">
+      <div className="rounded-2xl border border-ow-border/70 bg-ow-bg-deep/55 p-3 sm:p-4 shadow-[0_16px_40px_rgba(15,23,42,0.16)] backdrop-blur-sm">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <Input
             value={search}
             onChange={(event) => setSearch(event.target.value)}
@@ -141,7 +141,7 @@ export function PlayersList({ players }: PlayersListProps) {
           No players found.
         </div>
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-7">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7">
           {filteredPlayers.map((player) => (
             <PlayerCard key={player.player_id} player={player} />
           ))}

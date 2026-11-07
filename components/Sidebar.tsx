@@ -30,7 +30,7 @@ const SIDEBAR_STATE_KEY = "owes-sidebar-state";
 export function AppSidebar() {
   const router = useRouter();
   const path = usePathname();
-  const { state, toggleSidebar } = useSidebar();
+  const { state, setOpen, isMobile, setOpenMobile } = useSidebar();
   const didRestoreState = React.useRef(false);
 
   React.useLayoutEffect(() => {
@@ -42,10 +42,20 @@ export function AppSidebar() {
 
     const savedState = window.localStorage.getItem(SIDEBAR_STATE_KEY);
 
-    if (savedState === "collapsed" && state !== "collapsed") {
-      toggleSidebar();
+    // setOpen only affects the desktop sidebar, so this never opens the mobile sheet
+    if (savedState === "collapsed") {
+      setOpen(false);
     }
-  }, [state, toggleSidebar]);
+  }, [setOpen]);
+
+  const showFullSidebar = isMobile || state === "expanded";
+
+  const navigate = (route: string) => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+    router.push(route);
+  };
 
   const items = [
     {
@@ -77,7 +87,7 @@ export function AppSidebar() {
   const toggleCollapse = () => {
     const nextState = state === "collapsed" ? "expanded" : "collapsed";
     window.localStorage.setItem(SIDEBAR_STATE_KEY, nextState);
-    toggleSidebar();
+    setOpen(nextState === "expanded");
   };
 
   return (
@@ -86,11 +96,11 @@ export function AppSidebar() {
         <div
           className={cn(
             "text-3xl font-bold hover:cursor-pointer hover:border-ow-border hover:border hover:shadow-ow-border hover:shadow-xl hover:bg-ow-bg-muted",
-            state === "expanded" ? "p-5" : "p-2",
+            showFullSidebar ? "p-5" : "p-2",
           )}
-          onClick={() => router.push("/")}
+          onClick={() => navigate("/")}
         >
-          {state === "expanded" ? (
+          {showFullSidebar ? (
             <div className="flex flex-row items-center justify-between pr-5">
               <Image
                 src="/transparent_logo.png"
@@ -122,7 +132,7 @@ export function AppSidebar() {
                       ? "bg-ow-bg-muted border border-ow-border shadow-ow-border shadow-md"
                       : "",
                   )}
-                  onClick={() => router.push(item.route)}
+                  onClick={() => navigate(item.route)}
                   key={item.label}
                 >
                   <SidebarMenuButton className="hover:bg-transparent">
@@ -134,6 +144,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      {!isMobile && (
       <SidebarFooter>
         <SidebarGroup>
           <SidebarGroupContent>
@@ -164,6 +175,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarFooter>
+      )}
     </Sidebar>
   );
 }

@@ -40,9 +40,9 @@ export function SingleTeamPage({ teamPromise }: SingleTeamPageProps) {
   const openPlayer = (playerId: number) => router.push(`/players/${playerId}`);
 
   return (
-    <div className="grid gap-6 pb-40 lg:grid-cols-[minmax(0,1fr)_360px]">
-      <section className="rounded-3xl border border-ow-border/70 bg-ow-bg-deep/55 shadow-[0_18px_44px_rgba(15,23,42,0.16)] backdrop-blur-sm">
-        <div className="border-b border-ow-border/70 px-5 py-4 sm:px-6">
+    <div className="grid gap-4 pb-12 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:pb-40 xl:grid-cols-[minmax(0,1fr)_360px]">
+      <section className="min-w-0 rounded-2xl border sm:rounded-3xl border-ow-border/70 bg-ow-bg-deep/55 shadow-[0_18px_44px_rgba(15,23,42,0.16)] backdrop-blur-sm">
+        <div className="border-b border-ow-border/70 px-4 py-3 sm:px-6 sm:py-4">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-ow-text/60">
             Roster
           </p>
@@ -51,7 +51,7 @@ export function SingleTeamPage({ teamPromise }: SingleTeamPageProps) {
           </h1>
         </div>
 
-        <div className="overflow-hidden rounded-b-3xl">
+        <div className="overflow-hidden rounded-b-2xl sm:rounded-b-3xl">
           {sortedPlayers.length === 0 ? (
             <div className="flex min-h-80 items-center justify-center px-6 py-12 text-sm font-semibold text-ow-text/65">
               No players on this team.
@@ -61,10 +61,10 @@ export function SingleTeamPage({ teamPromise }: SingleTeamPageProps) {
               <table className="min-w-full border-separate border-spacing-0">
                 <thead className="sticky top-0 z-10 bg-ow-bg-deep/95 backdrop-blur-sm">
                   <tr className="text-left text-xs font-semibold uppercase tracking-[0.2em] text-ow-text/55">
-                    <th className="border-b border-ow-border/70 px-5 py-3 sm:px-6">
+                    <th className="border-b border-ow-border/70 px-4 py-3 sm:px-6">
                       Player
                     </th>
-                    <th className="border-b border-ow-border/70 px-5 py-3 text-right sm:px-6">
+                    <th className="border-b border-ow-border/70 px-4 py-3 text-right sm:px-6">
                       Role
                     </th>
                   </tr>
@@ -87,7 +87,7 @@ export function SingleTeamPage({ teamPromise }: SingleTeamPageProps) {
                         index % 2 === 0 ? "bg-ow-bg-deep/20" : "bg-ow-bg-deep/5"
                       }`}
                     >
-                      <td className="border-b border-ow-border/50 px-5 py-3 sm:px-6">
+                      <td className="border-b border-ow-border/50 px-4 py-3 sm:px-6">
                         <div className="flex items-center gap-3">
                           <div className="relative size-12 shrink-0 overflow-hidden rounded-2xl border border-ow-border/60 bg-ow-bg-muted">
                             <Image
@@ -114,7 +114,7 @@ export function SingleTeamPage({ teamPromise }: SingleTeamPageProps) {
                           </div>
                         </div>
                       </td>
-                      <td className="border-b border-ow-border/50 px-5 py-3 text-right sm:px-6">
+                      <td className="border-b border-ow-border/50 px-4 py-3 text-right sm:px-6">
                         <span className="inline-flex items-center gap-1.5 rounded-full border border-ow-border/60 bg-ow-bg-deep/40 py-1 pl-1.5 pr-3">
                           <span className="relative size-6 overflow-hidden rounded-full bg-white/5">
                             <Image
@@ -139,16 +139,16 @@ export function SingleTeamPage({ teamPromise }: SingleTeamPageProps) {
         </div>
       </section>
 
-      <aside className="lg:sticky lg:top-6 h-fit rounded-3xl border border-ow-border/70 bg-ow-bg-deep/60 shadow-[0_18px_44px_rgba(15,23,42,0.16)] backdrop-blur-sm">
-        <div className="relative aspect-square overflow-hidden rounded-t-3xl bg-ow-bg-muted">
+      <aside className="order-first h-fit overflow-hidden rounded-2xl border sm:grid sm:grid-cols-[200px_minmax(0,1fr)] sm:rounded-3xl lg:sticky lg:top-6 lg:order-none lg:block border-ow-border/70 bg-ow-bg-deep/60 shadow-[0_18px_44px_rgba(15,23,42,0.16)] backdrop-blur-sm">
+        <div className="relative aspect-square overflow-hidden bg-ow-bg-muted sm:self-start">
           <div className="absolute inset-0 bg-linear-to-br from-ow-bg-muted via-ow-bg-deep to-ow-bg-muted" />
 
           <Image
             src={teamLogo}
             alt={team.team_name}
             fill
-            sizes="(max-width: 1024px) 100vw, 360px"
-            className="object-contain p-10"
+            sizes="(max-width: 640px) 100vw, 360px"
+            className="object-contain p-8 sm:p-6 lg:p-10"
           />
 
           <div className="absolute inset-0 bg-linear-to-t from-ow-bg-deep/92 via-ow-bg-deep/20 to-transparent" />
@@ -166,7 +166,7 @@ export function SingleTeamPage({ teamPromise }: SingleTeamPageProps) {
           </div>
         </div>
 
-        <div className="space-y-3 px-5 py-4 sm:px-6">
+        <div className="space-y-3 px-4 py-4 sm:px-6">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-ow-text/55">
               Team details

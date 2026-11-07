@@ -48,9 +48,9 @@ export function SinglePlayerPage({ playerPromise }: SinglePlayerPageProps) {
     });
 
   return (
-    <div className="grid gap-6 pb-40 lg:grid-cols-[minmax(0,1fr)_360px]">
-      <section className="rounded-3xl border border-ow-border/70 bg-ow-bg-deep/55 shadow-[0_18px_44px_rgba(15,23,42,0.16)] backdrop-blur-sm">
-        <div className="border-b border-ow-border/70 px-5 py-4 sm:px-6">
+    <div className="grid gap-4 pb-12 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:pb-40 xl:grid-cols-[minmax(0,1fr)_360px]">
+      <section className="min-w-0 rounded-2xl border sm:rounded-3xl border-ow-border/70 bg-ow-bg-deep/55 shadow-[0_18px_44px_rgba(15,23,42,0.16)] backdrop-blur-sm">
+        <div className="border-b border-ow-border/70 px-4 py-3 sm:px-6 sm:py-4">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-ow-text/60">
             Hero ratings
           </p>
@@ -59,7 +59,7 @@ export function SinglePlayerPage({ playerPromise }: SinglePlayerPageProps) {
           </h1>
         </div>
 
-        <div className="overflow-hidden rounded-b-3xl">
+        <div className="overflow-hidden rounded-b-2xl sm:rounded-b-3xl">
           {sortedRatings.length === 0 ? (
             <div className="flex min-h-80 items-center justify-center px-6 py-12 text-sm font-semibold text-ow-text/65">
               No hero ratings available.
@@ -69,10 +69,10 @@ export function SinglePlayerPage({ playerPromise }: SinglePlayerPageProps) {
               <table className="min-w-full border-separate border-spacing-0">
                 <thead className="sticky top-0 z-10 bg-ow-bg-deep/95 backdrop-blur-sm">
                   <tr className="text-left text-xs font-semibold uppercase tracking-[0.2em] text-ow-text/55">
-                    <th className="border-b border-ow-border/70 px-5 py-3 sm:px-6">
+                    <th className="border-b border-ow-border/70 px-4 py-3 sm:px-6">
                       Hero
                     </th>
-                    <th className="border-b border-ow-border/70 px-5 py-3 text-right sm:px-6">
+                    <th className="border-b border-ow-border/70 px-4 py-3 text-right sm:px-6">
                       Rating
                     </th>
                   </tr>
@@ -94,7 +94,7 @@ export function SinglePlayerPage({ playerPromise }: SinglePlayerPageProps) {
                             : "bg-ow-bg-deep/5"
                         }
                       >
-                        <td className="border-b border-ow-border/50 px-5 py-3 sm:px-6">
+                        <td className="border-b border-ow-border/50 px-4 py-3 sm:px-6">
                           <div className="flex items-center gap-3">
                             <div className="relative size-12 shrink-0 overflow-hidden rounded-2xl border border-ow-border/60 bg-ow-bg-muted">
                               <Image
@@ -119,7 +119,7 @@ export function SinglePlayerPage({ playerPromise }: SinglePlayerPageProps) {
                             </div>
                           </div>
                         </td>
-                        <td className="border-b border-ow-border/50 px-5 py-3 text-right sm:px-6">
+                        <td className="border-b border-ow-border/50 px-4 py-3 text-right sm:px-6">
                           <span
                             className={`inline-flex min-w-12 justify-center rounded-full border border-transparent px-3 py-1 text-sm font-extrabold tracking-[0.18em] ${badgeClassName}`}
                           >
@@ -136,19 +136,19 @@ export function SinglePlayerPage({ playerPromise }: SinglePlayerPageProps) {
         </div>
       </section>
 
-      <aside className="lg:sticky lg:top-6 h-fit rounded-3xl border border-ow-border/70 bg-ow-bg-deep/60 shadow-[0_18px_44px_rgba(15,23,42,0.16)] backdrop-blur-sm">
-        <div className="relative aspect-square overflow-hidden rounded-t-3xl bg-ow-bg-muted">
+      <aside className="order-first h-fit overflow-hidden rounded-2xl border sm:grid sm:grid-cols-[200px_minmax(0,1fr)] sm:rounded-3xl lg:sticky lg:top-6 lg:order-none lg:block border-ow-border/70 bg-ow-bg-deep/60 shadow-[0_18px_44px_rgba(15,23,42,0.16)] backdrop-blur-sm">
+        <div className="relative aspect-square overflow-hidden bg-ow-bg-muted sm:self-start">
           <div className="absolute inset-0 bg-linear-to-br from-ow-bg-muted via-ow-bg-deep to-ow-bg-muted" />
 
           <Image
             src={player.player_image ?? "/transparent_logo.png"}
             alt={player.gamertag}
             fill
-            sizes="(max-width: 1024px) 100vw, 360px"
+            sizes="(max-width: 640px) 100vw, 360px"
             className={
               player.player_image
                 ? "object-cover object-center"
-                : "object-contain p-10"
+                : "object-contain p-8 sm:p-6 lg:p-10"
             }
           />
 
@@ -188,7 +188,7 @@ export function SinglePlayerPage({ playerPromise }: SinglePlayerPageProps) {
           </div>
         </div>
 
-        <div className="space-y-3 px-5 py-4 sm:px-6">
+        <div className="space-y-3 px-4 py-4 sm:px-6">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-ow-text/55">
               Player details

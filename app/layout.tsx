@@ -4,6 +4,7 @@ import { Providers } from "./providers";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/Sidebar";
+import { MobileHeader } from "@/components/MobileHeader";
 import { Inter } from "next/font/google";
 
 export const metadata: Metadata = {
@@ -24,10 +25,11 @@ export default function RootLayout({
       <body className="ow-page-bg ow-page-overlay flex min-h-0 overflow-hidden text-ow-text w-full">
         <TooltipProvider>
           <Providers>
-            <SidebarProvider>
+            <SidebarProvider className="h-svh">
               <AppSidebar />
-              <main className="flex-1 w-full min-h-0 overflow-auto">
-                <div className="min-h-full p-8">{children}</div>
+              <main className="min-h-0 min-w-0 flex-1 overflow-y-auto">
+                <MobileHeader />
+                <div className="p-4 sm:p-6 lg:p-8">{children}</div>
               </main>
             </SidebarProvider>
           </Providers>

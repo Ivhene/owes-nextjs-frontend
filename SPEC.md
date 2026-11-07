@@ -58,7 +58,8 @@ Validation after changes: `npm run lint` and `npx tsc --noEmit` (and `npm run bu
 | [app/providers.ts](./app/providers.ts)             | Client `Providers` wrapper (`ThemeProvider`)                                                           |
 | [app/globals.css](./app/globals.css)               | Tailwind import, shadcn theme variables, `--ow-*` brand tokens                                         |
 | [components/](./components)                        | Feature components grouped by domain (`heroes/`, `players/`, `teams/`), plus shared `ErrorMessage.tsx` |
-| [components/Sidebar.tsx](./components/Sidebar.tsx) | Navigation sidebar; collapse state in `localStorage` key `owes-sidebar-state`                          |
+| [components/Sidebar.tsx](./components/Sidebar.tsx) | Navigation sidebar; collapse state in `localStorage` key `owes-sidebar-state`. On mobile it closes after navigating and hides "Collapse" |
+| [components/MobileHeader.tsx](./components/MobileHeader.tsx) | Top bar shown below `md`, with the button that opens the sidebar sheet |
 | [components/ui/](./components/ui)                  | Generic shadcn/Radix primitives                                                                        |
 | [lib/API.ts](./lib/API.ts)                         | **All backend fetch functions**                                                                        |
 | [lib/types.ts](./lib/types.ts)                     | **All API/domain types**                                                                               |
@@ -124,6 +125,9 @@ Do not `await` in the page for this pattern, or the Suspense fallback never show
 - Tailwind utility classes in JSX. Use the `ow-*` tokens from [app/globals.css](./app/globals.css) (`text-ow-text`, `bg-ow-bg-deep`, `border-ow-border/70`, ...) instead of hard-coded hex.
 - Merge conditional classes with `cn()`.
 - Reuse `components/ui/*` before creating new primitives.
+- **Responsive, mobile-first (required):** every page must work on all standard screen sizes. Unprefixed classes are the mobile styles; scale up with Tailwind breakpoints (`sm`, `md`, `lg`, `xl`, `2xl`). Never force a minimum width that causes horizontal page scrolling.
+  - From `md` up the desktop sidebar takes 16rem of width, so content at `md` is narrower than at `sm`. Choose column counts with that in mind (e.g. card grids `grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7`).
+  - Below `md` the sidebar is a slide-out sheet opened from [components/MobileHeader.tsx](./components/MobileHeader.tsx). `main` in [app/layout.tsx](./app/layout.tsx) is the scroll container.
 
 ### 5.7 Images
 
