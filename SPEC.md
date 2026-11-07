@@ -24,7 +24,7 @@ Enums: `Regions` = `na | emea | japan | korea | pacific`; `Ratings` = `s | a | b
 
 - Next.js App Router app where individuals rate Overwatch esport players on heroes while watching Overwatch esports. Ratings are purely subjective (what the user feels, not derived from stats); the goal is to encourage paying extra attention while watching. A player always has one role but can be rated on heroes from any role.
 - Reads from an external REST API. No backend code in this repo.
-- Pages: Home (placeholder), Players list, Player detail, Heroes grid with tier-list dialog, Teams list, Team detail.
+- Pages: Home (intro + links to each page), Players list, Player detail, Heroes grid with tier-list dialog, Teams list, Team detail.
 
 ## 2. Tech stack
 
@@ -73,7 +73,7 @@ Where to put things:
 
 - New API call -> `lib/API.ts` (check Swagger for the route)
 - New/changed data shape -> `lib/types.ts`
-- New page -> `app/<route>/page.tsx`; add a nav entry in `components/Sidebar.tsx`
+- New page -> `app/<route>/page.tsx`; add a nav entry in `components/Sidebar.tsx` and a link card on the home page ([app/page.tsx](./app/page.tsx))
 - New feature component -> `components/<domain>/`
 - New generic UI primitive -> `components/ui/`
 - New color token -> `app/globals.css`
@@ -149,7 +149,7 @@ Do not `await` in the page for this pattern, or the Suspense fallback never show
 
 | Route                 | File                                                                 | Data              | Status                                                      |
 | --------------------- | -------------------------------------------------------------------- | ----------------- | ----------------------------------------------------------- |
-| `/`                   | [app/page.tsx](./app/page.tsx)                                       | none              | Placeholder (intentionally unfinished)                      |
+| `/`                   | [app/page.tsx](./app/page.tsx)                                       | none              | Static intro, "how it works", and a link card per page with a short description. When adding a page, add a card here too |
 | `/players`            | [app/players/page.tsx](./app/players/page.tsx)                       | `getPlayers()`    | Search + region/role/team filters                           |
 | `/players/[playerId]` | [app/players/[playerId]/page.tsx](./app/players/[playerId]/page.tsx) | `getPlayerById()` | Profile, team, ratings by hero                              |
 | `/heroes`             | [app/heroes/page.tsx](./app/heroes/page.tsx)                         | `getHeroes()`     | Grid by role, tier-list dialog                              |
