@@ -1,9 +1,15 @@
 "use client";
 
 import { ErrorMessage } from "@/components/ErrorMessage";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { getRatingRank, getRatingTier } from "@/lib/ratings";
 import { ApiResult, Player } from "@/lib/types";
 import Image from "next/image";
+import Link from "next/link";
 import { use } from "react";
 
 type SinglePlayerPageProps = {
@@ -170,15 +176,24 @@ export function SinglePlayerPage({ playerPromise }: SinglePlayerPageProps) {
           </div>
 
           {player.current_team && (
-            <div className="absolute right-2.5 top-2.5 size-7 overflow-hidden rounded-full border border-white/10 bg-ow-bg-deep/70 backdrop-blur-sm">
-              <Image
-                src={teamLogo}
-                alt={player.current_team.team_name}
-                fill
-                sizes="28px"
-                className="object-contain p-1"
-              />
-            </div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href={`/teams/${player.current_team.team_id}`}
+                  aria-label={`Open ${player.current_team.team_name} team page`}
+                  className="absolute right-2.5 top-2.5 size-7 overflow-hidden rounded-full border border-white/10 bg-ow-bg-deep/70 backdrop-blur-sm transition-colors hover:border-ow-orange focus-visible:border-ow-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ow-orange/50"
+                >
+                  <Image
+                    src={teamLogo}
+                    alt=""
+                    fill
+                    sizes="28px"
+                    className="object-contain p-1"
+                  />
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>{player.current_team.team_name}</TooltipContent>
+            </Tooltip>
           )}
 
           <div className="absolute inset-x-0 bottom-0 border-t border-white/10 bg-ow-bg-deep/88 px-3 py-2 backdrop-blur-sm">
