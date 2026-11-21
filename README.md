@@ -9,7 +9,7 @@ See [SPEC.md](./SPEC.md) for conventions and a map of the codebase (also intende
 ## Requirements
 
 - Node.js 20+
-- The OWES backend API running locally (Swagger UI at [http://localhost:5032/swagger](http://localhost:5032/swagger))
+- The OWES backend API running locally
 
 ## Setup
 
