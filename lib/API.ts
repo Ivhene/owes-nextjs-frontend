@@ -8,11 +8,24 @@ import {
   Player,
   Role,
   Team,
+  UpdateTeamRequest,
 } from "./types";
 
 const API_URL = process.env.API_URL;
 
-type ApiAction = "loading" | "saving";
+type ApiAction = "loading" | "saving" | "deleting";
+
+const serverErrorHints: Record<ApiAction, string> = {
+  loading: "The item may not exist, or the backend has a problem.",
+  saving: "Check the entered values, or the backend has a problem.",
+  deleting: "The item may still be in use, or the backend has a problem.",
+};
+
+const actionVerbs: Record<ApiAction, string> = {
+  loading: "Loading",
+  saving: "Saving",
+  deleting: "Deleting",
+};
 
 function describeHttpError(
   status: number,
@@ -23,23 +36,18 @@ function describeHttpError(
     return `${resource} could not be found.`;
   }
   if (status >= 500) {
-    const hint =
-      action === "loading"
-        ? "The item may not exist, or the backend has a problem."
-        : "Check the entered values, or the backend has a problem.";
-    return `The server failed while ${action} ${resource.toLowerCase()} (HTTP ${status}). ${hint}`;
+    return `The server failed while ${action} ${resource.toLowerCase()} (HTTP ${status}). ${serverErrorHints[action]}`;
   }
-  const verb = action === "loading" ? "Loading" : "Saving";
-  return `${verb} ${resource.toLowerCase()} failed (HTTP ${status}).`;
+  return `${actionVerbs[action]} ${resource.toLowerCase()} failed (HTTP ${status}).`;
 }
 
 // Never throws: network and HTTP failures are returned as `{ ok: false, error }`
-async function fetchJson<T>(
+async function send(
   path: string,
   resource: string,
   init: RequestInit,
-  action: ApiAction = "loading",
-): Promise<ApiResult<T>> {
+  action: ApiAction,
+): Promise<ApiResult<Response>> {
   let response: Response;
 
   try {
@@ -58,6 +66,21 @@ async function fetchJson<T>(
     };
   }
 
+  return { ok: true, data: response };
+}
+
+async function fetchJson<T>(
+  path: string,
+  resource: string,
+  init: RequestInit,
+  action: ApiAction = "loading",
+): Promise<ApiResult<T>> {
+  const sent = await send(path, resource, init, action);
+  if (!sent.ok) {
+    return sent;
+  }
+  const response = sent.data;
+
   try {
     return { ok: true, data: (await response.json()) as T };
   } catch {
@@ -68,7 +91,8 @@ async function fetchJson<T>(
   }
 }
 
-function postJson<T>(
+function sendJson<T>(
+  method: "POST" | "PUT",
   path: string,
   resource: string,
   body: unknown,
@@ -77,12 +101,21 @@ function postJson<T>(
     path,
     resource,
     {
-      method: "POST",
+      method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     },
     "saving",
   );
+}
+
+// DELETE answers 204 without a body
+async function deleteResource(
+  path: string,
+  resource: string,
+): Promise<ApiResult<null>> {
+  const sent = await send(path, resource, { method: "DELETE" }, "deleting");
+  return sent.ok ? { ok: true, data: null } : sent;
 }
 
 export function getHeroes(): Promise<ApiResult<Hero[]>> {
@@ -157,11 +190,23 @@ export async function getTeamById(teamId: number): Promise<ApiResult<Team>> {
 export function createPlayer(
   player: CreatePlayerRequest,
 ): Promise<ApiResult<CreatedPlayer>> {
-  return postJson<CreatedPlayer>("/players", "Player", player);
+  return sendJson<CreatedPlayer>("POST", "/players", "Player", player);
 }
 
 export function createTeam(
   team: CreateTeamRequest,
 ): Promise<ApiResult<CreatedTeam>> {
-  return postJson<CreatedTeam>("/teams", "Team", team);
+  return sendJson<CreatedTeam>("POST", "/teams", "Team", team);
+}
+
+// PUT replaces every editable field; the response is the team without players
+export function updateTeam(
+  teamId: number,
+  team: UpdateTeamRequest,
+): Promise<ApiResult<Team>> {
+  return sendJson<Team>("PUT", `/teams/${teamId}`, "Team", team);
+}
+
+export function deleteTeam(teamId: number): Promise<ApiResult<null>> {
+  return deleteResource(`/teams/${teamId}`, "Team");
 }

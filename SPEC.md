@@ -30,7 +30,7 @@ Enums: `Regions` = `na | emea | japan | korea | pacific`; `Ratings` = `s | a | b
 
 - Next.js App Router app where individuals rate Overwatch esport players on heroes while watching Overwatch esports. Ratings are purely subjective (what the user feels, not derived from stats); the goal is to encourage paying extra attention while watching. A player always has one role but can be rated on heroes from any role.
 - Reads from an external REST API. No backend code in this repo.
-- Pages: Home (intro + links to each page), Players list (with "Add player" dialog), Player detail, Heroes grid with tier-list dialog, Teams list (with "Add team" dialog), Team detail.
+- Pages: Home (intro + links to each page), Players list (with "Add player" dialog), Player detail, Heroes grid with tier-list dialog, Teams list (with "Add team" dialog), Team detail (with edit/delete).
 
 ## 2. Tech stack
 
@@ -65,12 +65,14 @@ Validation after changes: `npm run lint` and `npx tsc --noEmit` (and `npm run bu
 | [app/globals.css](./app/globals.css)                                                                                                                           | Tailwind import, shadcn theme variables, `--ow-*` brand tokens                                                                                                         |
 | [components/](./components)                                                                                                                                    | Feature components grouped by domain (`heroes/`, `players/`, `teams/`), plus shared `ErrorMessage.tsx` and `FormField.tsx` (label + required marker for form controls) |
 | [components/players/AddPlayerDialog.tsx](./components/players/AddPlayerDialog.tsx), [components/teams/AddTeamDialog.tsx](./components/teams/AddTeamDialog.tsx) | "Add" button + dialog form, placed in the filter bar of the list pages                                                                                                 |
+| [components/teams/TeamForm.tsx](./components/teams/TeamForm.tsx)                                                                                               | Team form fields shared by the add and edit dialogs                                                                                                                    |
+| [components/teams/TeamActions.tsx](./components/teams/TeamActions.tsx)                                                                                         | Edit (dialog) and delete (confirmation) icon buttons on the team detail image                                                                                          |
 | [components/Sidebar.tsx](./components/Sidebar.tsx)                                                                                                             | Navigation sidebar; collapse state in `localStorage` key `owes-sidebar-state`. On mobile it closes after navigating and hides "Collapse"                               |
 | [components/MobileHeader.tsx](./components/MobileHeader.tsx)                                                                                                   | Top bar shown below `md`, with the button that opens the sidebar sheet                                                                                                 |
 | [components/ui/](./components/ui)                                                                                                                              | Generic shadcn/Radix primitives                                                                                                                                        |
 | [lib/API.ts](./lib/API.ts)                                                                                                                                     | **All backend fetch functions**                                                                                                                                        |
-| [lib/actions.ts](./lib/actions.ts)                                                                                                                             | **Server actions for mutations** (`addPlayer`, `addTeam`): validate, call `lib/API.ts`, invalidate cache tags                                                          |
-| [lib/validation.ts](./lib/validation.ts)                                                                                                                       | Pure validation/normalization of create payloads and column limits; used by forms and server actions                                                                   |
+| [lib/actions.ts](./lib/actions.ts)                                                                                                                             | **Server actions for mutations** (`addPlayer`, `addTeam`, `editTeam`, `removeTeam`): validate, call `lib/API.ts`, invalidate cache tags                                |
+| [lib/validation.ts](./lib/validation.ts)                                                                                                                       | Pure validation/normalization of create/update payloads and column limits; used by forms and server actions                                                            |
 | [lib/types.ts](./lib/types.ts)                                                                                                                                 | **All API/domain types**                                                                                                                                               |
 | [lib/regions.ts](./lib/regions.ts)                                                                                                                             | Region values + display labels (mirror of the backend `Regions` enum)                                                                                                  |
 | [lib/image-hosts.ts](./lib/image-hosts.ts)                                                                                                                     | Allowed remote image hosts (used by `next.config.ts` and image URL validation)                                                                                         |
@@ -117,20 +119,23 @@ Do not `await` in the page for this pattern, or the Suspense fallback never show
 ### 5.4 API layer ([lib/API.ts](./lib/API.ts))
 
 - Base URL from `process.env.API_URL`.
-- All calls go through the internal `fetchJson<T>()` helper. **API functions never throw.** They return `ApiResult<T>` (`{ ok: true, data } | { ok: false, error }`, defined in [lib/types.ts](./lib/types.ts)), where `error` is a user-facing message describing what went wrong (API unreachable, not found, server error, unreadable response). New functions must follow this.
+- All calls go through the internal `send()` helper (`fetchJson<T>()` for JSON responses, `deleteResource()` for DELETE, which answers 204 without a body). **API functions never throw.** They return `ApiResult<T>` (`{ ok: true, data } | { ok: false, error }`, defined in [lib/types.ts](./lib/types.ts)), where `error` is a user-facing message describing what went wrong (API unreachable, not found, server error, unreadable response). New functions must follow this.
 - Consumers check `result.ok` and render `<ErrorMessage>` ([components/ErrorMessage.tsx](./components/ErrorMessage.tsx)) with `result.error` when it is false. Never let an API failure crash the page.
 - **Caching rule:** every GET uses `cache: "force-cache"` with `next: { revalidate: 1200, tags: [...] }`. Do not use `cache: "no-store"`.
   - Tags identify the resource (`heroes`, `players`, and per-item tags such as `player-<id>` when a single item is fetched).
 - **Mutation rule:** every create, update or delete must invalidate **all** cache tags that the affected data could appear under (e.g. updating a player invalidates `players` and `player-<id>`, and `heroes` too if the change touches hero ratings). Invalidation must **immediately trigger a refetch** (use `updateTag`/`revalidateTag` or the equivalent Next 16 API that refreshes right away, not a lazy revalidate on the next visit).
-- Mutations: `lib/API.ts` has the POST functions (`createPlayer`, `createTeam`, via the internal `postJson()`); they are only called from the `"use server"` actions in [lib/actions.ts](./lib/actions.ts), which validate with [lib/validation.ts](./lib/validation.ts) and then call `updateTag` (Server Actions only; expires the tag immediately so the current page re-renders with fresh data in the same round trip).
+- Mutations: `lib/API.ts` has the POST/PUT/DELETE functions (`createPlayer`, `createTeam`, `updateTeam`, `deleteTeam`, via the internal `sendJson()`/`deleteResource()`); they are only called from the `"use server"` actions in [lib/actions.ts](./lib/actions.ts), which validate with [lib/validation.ts](./lib/validation.ts) and then call `updateTag` (Server Actions only; expires the tag immediately so the current page re-renders with fresh data in the same round trip).
   - `addPlayer` invalidates `players`, `player-<id>`, and `teams` + `team-<teamId>` when the player gets a team (teams include their roster).
   - `addTeam` invalidates `teams` and `team-<id>`.
+  - `editTeam` (PUT is a full replace of name, image and region) invalidates `teams`, `team-<id>`, `players` and `player-<id>` of every roster player (players embed their current team).
+  - `removeTeam` invalidates the same tags plus `heroes` (hero ratings embed the player's team id), then `redirect("/teams")`. After a successful delete, always redirect to the list page.
 - `getPlayerById` follows the caching rule (tag `player-<id>`). A mutation of a player must also invalidate `players` and `player-<id>`.
 - [app/error.tsx](./app/error.tsx) is the global fallback for unexpected render errors (with a "Try again" button).
 
 ### 5.4.1 Forms
 
-- Add/edit forms open in a `Dialog` from a button in the page's filter bar (full width on mobile, right-aligned from `lg`).
+- Add forms open in a `Dialog` from a button in the page's filter bar (full width on mobile, right-aligned from `lg`).
+- Edit and delete live on the detail page as icon buttons (edit left, delete right) in the top right of the image, opposite the region pill. Editing uses the same form as adding, prefilled, in a `Dialog`; every field except ids and nested collections (e.g. `players`) is editable. Deleting must be confirmed in an `AlertDialog` first; it stays open while deleting and shows errors inside.
 - Controlled state + `useTransition`; run the shared validation from `lib/validation.ts` on submit for instant feedback, then call the server action (which validates again). Show errors inside the dialog; close it on success.
 - Fixed sets of values are dropdowns (`Select`): role (from `getRoles()`), region (`lib/regions.ts`), current team (existing teams + "No team").
 - Required fields: player `gamertag`, `player_role`, `native_region`; team `team_name`, `competing_region`. Other fields are optional (unknown values) and are sent as `null` when empty.
@@ -153,7 +158,7 @@ Do not `await` in the page for this pattern, or the Suspense fallback never show
 
 ### 5.7 Images
 
-- Use `next/image`. Remote hosts are listed in [lib/image-hosts.ts](./lib/image-hosts.ts) (currently `static.wikia.nocookie.net`, `d15f34w2p8l1cc.cloudfront.net`, `cdn.discordapp.com`, all https); [next.config.ts](./next.config.ts) builds `images.remotePatterns` from it, and image URL inputs are validated against it. Add new hosts there only.
+- Use `next/image`. Remote hosts are listed in [lib/image-hosts.ts](./lib/image-hosts.ts) (currently `static.wikia.nocookie.net`, `d15f34w2p8l1cc.cloudfront.net`, `cdn.discordapp.com`, `liquipedia.net`, all https); [next.config.ts](./next.config.ts) builds `images.remotePatterns` from it, and image URL inputs are validated against it. Add new hosts there only.
 - Fallback image: `/transparent_logo.png`, drawn with `object-contain` over the gradient background, for players and teams without an image. Role icons are served from `public/` (e.g. `/Tank_icon.svg`).
 
 ### 5.8 Comments
@@ -180,7 +185,7 @@ Do not `await` in the page for this pattern, or the Suspense fallback never show
 | `/players/[playerId]` | [app/players/[playerId]/page.tsx](./app/players/[playerId]/page.tsx) | `getPlayerById()`                          | Profile, team, ratings by hero                                                                                           |
 | `/heroes`             | [app/heroes/page.tsx](./app/heroes/page.tsx)                         | `getHeroes()`                              | Grid by role, tier-list dialog                                                                                           |
 | `/teams`              | [app/teams/page.tsx](./app/teams/page.tsx)                           | `getTeams()`                               | Search + region filter, "Add team" dialog, cards link to team detail                                                     |
-| `/teams/[teamId]`     | [app/teams/[teamId]/page.tsx](./app/teams/[teamId]/page.tsx)         | `getTeamById()`                            | Team info + roster table; each row links to the player page                                                              |
+| `/teams/[teamId]`     | [app/teams/[teamId]/page.tsx](./app/teams/[teamId]/page.tsx)         | `getTeamById()`                            | Team info + roster table; each row links to the player page. Edit/delete icons on the team image                         |
 
 ## 8. Domain notes
 

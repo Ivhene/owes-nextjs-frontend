@@ -54,6 +54,9 @@ export type CreateTeamRequest = {
   competing_region: Region;
 };
 
+// PUT replaces every editable field, so it takes the same body as POST
+export type UpdateTeamRequest = CreateTeamRequest;
+
 // POST responses only contain part of the created item
 export type CreatedPlayer = { player_id: number; gamertag: string };
 export type CreatedTeam = { team_id: number; team_name: string };

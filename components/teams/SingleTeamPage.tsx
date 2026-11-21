@@ -6,6 +6,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { use } from "react";
 
+import { TeamActions } from "./TeamActions";
+
 type SingleTeamPageProps = {
   teamPromise: Promise<ApiResult<Team>>;
 };
@@ -158,6 +160,8 @@ export function SingleTeamPage({ teamPromise }: SingleTeamPageProps) {
               {team.competing_region}
             </span>
           </div>
+
+          <TeamActions team={team} className="absolute right-2.5 top-2.5" />
 
           <div className="absolute inset-x-0 bottom-0 border-t border-white/10 bg-ow-bg-deep/88 px-3 py-2 backdrop-blur-sm">
             <span className="block truncate text-center text-sm font-extrabold uppercase tracking-[0.18em] text-ow-text">
