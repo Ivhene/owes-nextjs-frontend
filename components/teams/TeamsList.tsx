@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ApiResult, Team } from "@/lib/types";
+import { AddTeamDialog } from "./AddTeamDialog";
 import { TeamCard } from "./TeamCard";
 
 type TeamsListProps = {
@@ -59,27 +60,31 @@ export function TeamsList({ teams }: TeamsListProps) {
   return (
     <div className="flex w-full flex-col gap-4 sm:gap-6">
       <div className="rounded-2xl border border-ow-border/70 bg-ow-bg-deep/55 p-3 sm:p-4 shadow-[0_16px_40px_rgba(15,23,42,0.16)] backdrop-blur-sm">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <Input
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search teams"
-            className={controlClassName}
-          />
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-start">
+          <div className="grid flex-1 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <Input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search teams"
+              className={controlClassName}
+            />
 
-          <Select value={regionFilter} onValueChange={setRegionFilter}>
-            <SelectTrigger className={controlClassName}>
-              <SelectValue placeholder="Region" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All regions</SelectItem>
-              {regions.map((region) => (
-                <SelectItem key={region} value={region}>
-                  {region}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            <Select value={regionFilter} onValueChange={setRegionFilter}>
+              <SelectTrigger className={controlClassName}>
+                <SelectValue placeholder="Region" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All regions</SelectItem>
+                {regions.map((region) => (
+                  <SelectItem key={region} value={region}>
+                    {region}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <AddTeamDialog />
         </div>
       </div>
 

@@ -8,11 +8,17 @@ Agent-facing specification for the **OWES - Overwatch Esport Scouting** frontend
 - When the owner states a new requirement, rule or preference, add it to the relevant section of this file, even if no code changes are needed.
 - Keep entries short and use links relative to the repository root.
 
+## Working boundaries (always)
+
+- Work only inside this repository. Never search for, locate, read, run or edit the backend (or anything else outside this repo), even if it seems reachable.
+- Backend knowledge comes only from Swagger and real API responses (section 0). If a task needs more than that (backend internals, a backend fix, a new endpoint), stop and give the owner a ready-to-paste **prompt for an agent working in the backend repo**: what is needed, why, the observed behavior/evidence (requests and responses), and what the agent should report back.
+- Never write machine-specific details (absolute paths, local folder locations, user names, installed tools/browsers) into this SPEC, the README, code or comments. The owner develops on several machines, so such details would mislead.
+
 ## 0. API availability (read first)
 
 - API endpoints are documented in Swagger UI: [http://localhost:5032/swagger](http://localhost:5032/swagger) (JSON: `http://localhost:5032/swagger/v1/swagger.json`).
 - The Swagger URL above is **only for retrieving API documentation**. It is not the app's `API_URL`.
-- If a task needs the API and it is **not available**, **immediately reply** that the API needs to be made available before continuing. Do not guess endpoint shapes or silently mock data.
+- If a task needs the API and it is **not available**, **immediately reply** that the API needs to be made available before continuing. Do not guess endpoint shapes or silently mock data. If Swagger or the API cannot be reached, assume the backend is not running (do not invent other causes); ask the owner to start it.
 - API and type definitions live in [lib/API.ts](./lib/API.ts) (fetch functions) and [lib/types.ts](./lib/types.ts) (types). Read these first.
 - **Swagger response schemas are incomplete/inaccurate** (e.g. its `Player` has `player_role: int` while real responses return a nested `role` object). Use Swagger for routes, request bodies and enums; verify response shapes against the real response and [lib/types.ts](./lib/types.ts).
 
@@ -24,7 +30,7 @@ Enums: `Regions` = `na | emea | japan | korea | pacific`; `Ratings` = `s | a | b
 
 - Next.js App Router app where individuals rate Overwatch esport players on heroes while watching Overwatch esports. Ratings are purely subjective (what the user feels, not derived from stats); the goal is to encourage paying extra attention while watching. A player always has one role but can be rated on heroes from any role.
 - Reads from an external REST API. No backend code in this repo.
-- Pages: Home (intro + links to each page), Players list, Player detail, Heroes grid with tier-list dialog, Teams list, Team detail.
+- Pages: Home (intro + links to each page), Players list (with "Add player" dialog), Player detail, Heroes grid with tier-list dialog, Teams list (with "Add team" dialog), Team detail.
 
 ## 2. Tech stack
 
@@ -51,28 +57,33 @@ Validation after changes: `npm run lint` and `npx tsc --noEmit` (and `npm run bu
 
 ## 4. Repository map
 
-| Path                                               | Purpose                                                                                                |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| [app/](./app)                                      | Routes, root layout, global CSS                                                                        |
-| [app/layout.tsx](./app/layout.tsx)                 | Root layout: providers, `TooltipProvider`, `SidebarProvider`, `AppSidebar`, metadata                   |
-| [app/providers.ts](./app/providers.ts)             | Client `Providers` wrapper (`ThemeProvider`)                                                           |
-| [app/globals.css](./app/globals.css)               | Tailwind import, shadcn theme variables, `--ow-*` brand tokens                                         |
-| [components/](./components)                        | Feature components grouped by domain (`heroes/`, `players/`, `teams/`), plus shared `ErrorMessage.tsx` |
-| [components/Sidebar.tsx](./components/Sidebar.tsx) | Navigation sidebar; collapse state in `localStorage` key `owes-sidebar-state`. On mobile it closes after navigating and hides "Collapse" |
-| [components/MobileHeader.tsx](./components/MobileHeader.tsx) | Top bar shown below `md`, with the button that opens the sidebar sheet |
-| [components/ui/](./components/ui)                  | Generic shadcn/Radix primitives                                                                        |
-| [lib/API.ts](./lib/API.ts)                         | **All backend fetch functions**                                                                        |
-| [lib/types.ts](./lib/types.ts)                     | **All API/domain types**                                                                               |
-| [lib/utils.ts](./lib/utils.ts)                     | `cn()` (`clsx` + `tailwind-merge`)                                                                     |
-| [lib/ratings.ts](./lib/ratings.ts)                 | Rating tiers S-F: order and colors, shared by the hero tier list and player ratings                    |
-| [hooks/](./hooks)                                  | Shared hooks (`use-mobile.ts`)                                                                         |
-| [public/](./public)                                | Static assets: logos, role icons                                                                       |
-| [next.config.ts](./next.config.ts)                 | Allowed remote image hosts                                                                             |
-| [components.json](./components.json)               | shadcn config (style `radix-nova`, aliases)                                                            |
+| Path                                                                                                                                                           | Purpose                                                                                                                                                                |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [app/](./app)                                                                                                                                                  | Routes, root layout, global CSS                                                                                                                                        |
+| [app/layout.tsx](./app/layout.tsx)                                                                                                                             | Root layout: providers, `TooltipProvider`, `SidebarProvider`, `AppSidebar`, metadata                                                                                   |
+| [app/providers.ts](./app/providers.ts)                                                                                                                         | Client `Providers` wrapper (`ThemeProvider`)                                                                                                                           |
+| [app/globals.css](./app/globals.css)                                                                                                                           | Tailwind import, shadcn theme variables, `--ow-*` brand tokens                                                                                                         |
+| [components/](./components)                                                                                                                                    | Feature components grouped by domain (`heroes/`, `players/`, `teams/`), plus shared `ErrorMessage.tsx` and `FormField.tsx` (label + required marker for form controls) |
+| [components/players/AddPlayerDialog.tsx](./components/players/AddPlayerDialog.tsx), [components/teams/AddTeamDialog.tsx](./components/teams/AddTeamDialog.tsx) | "Add" button + dialog form, placed in the filter bar of the list pages                                                                                                 |
+| [components/Sidebar.tsx](./components/Sidebar.tsx)                                                                                                             | Navigation sidebar; collapse state in `localStorage` key `owes-sidebar-state`. On mobile it closes after navigating and hides "Collapse"                               |
+| [components/MobileHeader.tsx](./components/MobileHeader.tsx)                                                                                                   | Top bar shown below `md`, with the button that opens the sidebar sheet                                                                                                 |
+| [components/ui/](./components/ui)                                                                                                                              | Generic shadcn/Radix primitives                                                                                                                                        |
+| [lib/API.ts](./lib/API.ts)                                                                                                                                     | **All backend fetch functions**                                                                                                                                        |
+| [lib/actions.ts](./lib/actions.ts)                                                                                                                             | **Server actions for mutations** (`addPlayer`, `addTeam`): validate, call `lib/API.ts`, invalidate cache tags                                                          |
+| [lib/validation.ts](./lib/validation.ts)                                                                                                                       | Pure validation/normalization of create payloads and column limits; used by forms and server actions                                                                   |
+| [lib/types.ts](./lib/types.ts)                                                                                                                                 | **All API/domain types**                                                                                                                                               |
+| [lib/regions.ts](./lib/regions.ts)                                                                                                                             | Region values + display labels (mirror of the backend `Regions` enum)                                                                                                  |
+| [lib/image-hosts.ts](./lib/image-hosts.ts)                                                                                                                     | Allowed remote image hosts (used by `next.config.ts` and image URL validation)                                                                                         |
+| [lib/utils.ts](./lib/utils.ts)                                                                                                                                 | `cn()` (`clsx` + `tailwind-merge`)                                                                                                                                     |
+| [lib/ratings.ts](./lib/ratings.ts)                                                                                                                             | Rating tiers S-F: order and colors, shared by the hero tier list and player ratings                                                                                    |
+| [hooks/](./hooks)                                                                                                                                              | Shared hooks (`use-mobile.ts`)                                                                                                                                         |
+| [public/](./public)                                                                                                                                            | Static assets: logos, role icons                                                                                                                                       |
+| [next.config.ts](./next.config.ts)                                                                                                                             | Image config (`remotePatterns` built from `lib/image-hosts.ts`)                                                                                                        |
+| [components.json](./components.json)                                                                                                                           | shadcn config (style `radix-nova`, aliases)                                                                                                                            |
 
 Where to put things:
 
-- New API call -> `lib/API.ts` (check Swagger for the route)
+- New API call -> `lib/API.ts` (check Swagger for the route); mutations are called through a server action in `lib/actions.ts`
 - New/changed data shape -> `lib/types.ts`
 - New page -> `app/<route>/page.tsx`; add a nav entry in `components/Sidebar.tsx` and a link card on the home page ([app/page.tsx](./app/page.tsx))
 - New feature component -> `components/<domain>/`
@@ -92,6 +103,7 @@ Where to put things:
 - Props typed with a local `type XProps = {...}` above the component.
 - Add `"use client"` only to components that use hooks/`use()`/browser APIs.
 - Everything in [components/ui/](./components/ui) is a shadcn component added via the shadcn CLI (see [components.json](./components.json)). Do not hand-write new primitives in that style. Add new ones with the shadcn CLI, then adapt only if needed.
+  - CLI bug (seen with shadcn 4.12 and 4.23): added components may import `cn` from `"cn"` and add a `cn` npm package. Change the import to `@/lib/utils` and `npm uninstall cn`.
 
 ### 5.3 Data fetching: promise-passing pattern
 
@@ -110,9 +122,19 @@ Do not `await` in the page for this pattern, or the Suspense fallback never show
 - **Caching rule:** every GET uses `cache: "force-cache"` with `next: { revalidate: 1200, tags: [...] }`. Do not use `cache: "no-store"`.
   - Tags identify the resource (`heroes`, `players`, and per-item tags such as `player-<id>` when a single item is fetched).
 - **Mutation rule:** every create, update or delete must invalidate **all** cache tags that the affected data could appear under (e.g. updating a player invalidates `players` and `player-<id>`, and `heroes` too if the change touches hero ratings). Invalidation must **immediately trigger a refetch** (use `updateTag`/`revalidateTag` or the equivalent Next 16 API that refreshes right away, not a lazy revalidate on the next visit).
-- Mutations are not implemented yet; follow these rules when adding them.
+- Mutations: `lib/API.ts` has the POST functions (`createPlayer`, `createTeam`, via the internal `postJson()`); they are only called from the `"use server"` actions in [lib/actions.ts](./lib/actions.ts), which validate with [lib/validation.ts](./lib/validation.ts) and then call `updateTag` (Server Actions only; expires the tag immediately so the current page re-renders with fresh data in the same round trip).
+  - `addPlayer` invalidates `players`, `player-<id>`, and `teams` + `team-<teamId>` when the player gets a team (teams include their roster).
+  - `addTeam` invalidates `teams` and `team-<id>`.
 - `getPlayerById` follows the caching rule (tag `player-<id>`). A mutation of a player must also invalidate `players` and `player-<id>`.
 - [app/error.tsx](./app/error.tsx) is the global fallback for unexpected render errors (with a "Try again" button).
+
+### 5.4.1 Forms
+
+- Add/edit forms open in a `Dialog` from a button in the page's filter bar (full width on mobile, right-aligned from `lg`).
+- Controlled state + `useTransition`; run the shared validation from `lib/validation.ts` on submit for instant feedback, then call the server action (which validates again). Show errors inside the dialog; close it on success.
+- Fixed sets of values are dropdowns (`Select`): role (from `getRoles()`), region (`lib/regions.ts`), current team (existing teams + "No team").
+- Required fields: player `gamertag`, `player_role`, `native_region`; team `team_name`, `competing_region`. Other fields are optional (unknown values) and are sent as `null` when empty.
+- Image fields take a URL and only accept https URLs on the allowed image hosts (see 5.7).
 
 ### 5.5 Types ([lib/types.ts](./lib/types.ts))
 
@@ -131,7 +153,7 @@ Do not `await` in the page for this pattern, or the Suspense fallback never show
 
 ### 5.7 Images
 
-- Use `next/image`. Remote hosts must be in `images.remotePatterns` in [next.config.ts](./next.config.ts) (currently `static.wikia.nocookie.net`, `d15f34w2p8l1cc.cloudfront.net`, `cdn.discordapp.com`, all https).
+- Use `next/image`. Remote hosts are listed in [lib/image-hosts.ts](./lib/image-hosts.ts) (currently `static.wikia.nocookie.net`, `d15f34w2p8l1cc.cloudfront.net`, `cdn.discordapp.com`, all https); [next.config.ts](./next.config.ts) builds `images.remotePatterns` from it, and image URL inputs are validated against it. Add new hosts there only.
 - Fallback image: `/transparent_logo.png`, drawn with `object-contain` over the gradient background, for players and teams without an image. Role icons are served from `public/` (e.g. `/Tank_icon.svg`).
 
 ### 5.8 Comments
@@ -151,14 +173,14 @@ Do not `await` in the page for this pattern, or the Suspense fallback never show
 
 ## 7. Routes
 
-| Route                 | File                                                                 | Data              | Status                                                      |
-| --------------------- | -------------------------------------------------------------------- | ----------------- | ----------------------------------------------------------- |
-| `/`                   | [app/page.tsx](./app/page.tsx)                                       | none              | Static intro, "how it works", and a link card per page with a short description. When adding a page, add a card here too |
-| `/players`            | [app/players/page.tsx](./app/players/page.tsx)                       | `getPlayers()`    | Search + region/role/team filters                           |
-| `/players/[playerId]` | [app/players/[playerId]/page.tsx](./app/players/[playerId]/page.tsx) | `getPlayerById()` | Profile, team, ratings by hero                              |
-| `/heroes`             | [app/heroes/page.tsx](./app/heroes/page.tsx)                         | `getHeroes()`     | Grid by role, tier-list dialog                              |
-| `/teams`              | [app/teams/page.tsx](./app/teams/page.tsx)                           | `getTeams()`      | Search + region filter, cards link to team detail           |
-| `/teams/[teamId]`     | [app/teams/[teamId]/page.tsx](./app/teams/[teamId]/page.tsx)         | `getTeamById()`   | Team info + roster table; each row links to the player page |
+| Route                 | File                                                                 | Data                                       | Status                                                                                                                   |
+| --------------------- | -------------------------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `/`                   | [app/page.tsx](./app/page.tsx)                                       | none                                       | Static intro, "how it works", and a link card per page with a short description. When adding a page, add a card here too |
+| `/players`            | [app/players/page.tsx](./app/players/page.tsx)                       | `getPlayers()`, `getTeams()`, `getRoles()` | Search + region/role/team filters, "Add player" dialog                                                                   |
+| `/players/[playerId]` | [app/players/[playerId]/page.tsx](./app/players/[playerId]/page.tsx) | `getPlayerById()`                          | Profile, team, ratings by hero                                                                                           |
+| `/heroes`             | [app/heroes/page.tsx](./app/heroes/page.tsx)                         | `getHeroes()`                              | Grid by role, tier-list dialog                                                                                           |
+| `/teams`              | [app/teams/page.tsx](./app/teams/page.tsx)                           | `getTeams()`                               | Search + region filter, "Add team" dialog, cards link to team detail                                                     |
+| `/teams/[teamId]`     | [app/teams/[teamId]/page.tsx](./app/teams/[teamId]/page.tsx)         | `getTeamById()`                            | Team info + roster table; each row links to the player page                                                              |
 
 ## 8. Domain notes
 

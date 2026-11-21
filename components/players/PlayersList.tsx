@@ -11,16 +11,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ErrorMessage } from "@/components/ErrorMessage";
-import { ApiResult, Player } from "@/lib/types";
+import { ApiResult, Player, Role, Team } from "@/lib/types";
+import { AddPlayerDialog } from "./AddPlayerDialog";
 import { PlayerCard } from "./PlayerCard";
 
 type PlayersListProps = {
   players: Promise<ApiResult<Player[]>>;
+  teams: Promise<ApiResult<Team[]>>;
+  roles: Promise<ApiResult<Role[]>>;
 };
 
 const noPlayers: Player[] = [];
 
-export function PlayersList({ players }: PlayersListProps) {
+export function PlayersList({
+  players,
+  teams: teamOptions,
+  roles: roleOptions,
+}: PlayersListProps) {
   const result = use(players);
   const playersData = result.ok ? result.data : noPlayers;
 
@@ -84,55 +91,59 @@ export function PlayersList({ players }: PlayersListProps) {
   return (
     <div className="flex w-full flex-col gap-4 sm:gap-6">
       <div className="rounded-2xl border border-ow-border/70 bg-ow-bg-deep/55 p-3 sm:p-4 shadow-[0_16px_40px_rgba(15,23,42,0.16)] backdrop-blur-sm">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <Input
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search players"
-            className={controlClassName}
-          />
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-start">
+          <div className="grid flex-1 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <Input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search players"
+              className={controlClassName}
+            />
 
-          <Select value={regionFilter} onValueChange={setRegionFilter}>
-            <SelectTrigger className={controlClassName}>
-              <SelectValue placeholder="Region" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All regions</SelectItem>
-              {regions.map((region) => (
-                <SelectItem key={region} value={region}>
-                  {region}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            <Select value={regionFilter} onValueChange={setRegionFilter}>
+              <SelectTrigger className={controlClassName}>
+                <SelectValue placeholder="Region" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All regions</SelectItem>
+                {regions.map((region) => (
+                  <SelectItem key={region} value={region}>
+                    {region}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-          <Select value={roleFilter} onValueChange={setRoleFilter}>
-            <SelectTrigger className={controlClassName}>
-              <SelectValue placeholder="Role" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All roles</SelectItem>
-              {roles.map((role) => (
-                <SelectItem key={role} value={role}>
-                  {role}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            <Select value={roleFilter} onValueChange={setRoleFilter}>
+              <SelectTrigger className={controlClassName}>
+                <SelectValue placeholder="Role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All roles</SelectItem>
+                {roles.map((role) => (
+                  <SelectItem key={role} value={role}>
+                    {role}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-          <Select value={teamFilter} onValueChange={setTeamFilter}>
-            <SelectTrigger className={controlClassName}>
-              <SelectValue placeholder="Team" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All teams</SelectItem>
-              {teams.map((team) => (
-                <SelectItem key={team} value={team}>
-                  {team}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            <Select value={teamFilter} onValueChange={setTeamFilter}>
+              <SelectTrigger className={controlClassName}>
+                <SelectValue placeholder="Team" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All teams</SelectItem>
+                {teams.map((team) => (
+                  <SelectItem key={team} value={team}>
+                    {team}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <AddPlayerDialog teams={teamOptions} roles={roleOptions} />
         </div>
       </div>
 
