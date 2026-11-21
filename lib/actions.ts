@@ -6,8 +6,11 @@ import { redirect } from "next/navigation";
 import {
   createPlayer,
   createTeam,
+  deletePlayer,
   deleteTeam,
+  getPlayerById,
   getTeamById,
+  updatePlayer,
   updateTeam,
 } from "./API";
 import {
@@ -16,7 +19,9 @@ import {
   CreatedTeam,
   CreatePlayerRequest,
   CreateTeamRequest,
+  Player,
   Team,
+  UpdatePlayerRating,
   UpdateTeamRequest,
 } from "./types";
 import { validatePlayer, validateTeam } from "./validation";
@@ -62,10 +67,13 @@ export async function addTeam(
   return result;
 }
 
-const invalidTeamId: ApiResult<never> = {
-  ok: false,
-  error: "The team id is not valid.",
-};
+function isValidId(id: number): boolean {
+  return Number.isInteger(id) && id > 0;
+}
+
+function invalidId(resource: string): ApiResult<never> {
+  return { ok: false, error: `The ${resource} id is not valid.` };
+}
 
 // Players embed their current team, so a team change also affects its roster
 async function getRosterIds(teamId: number): Promise<number[]> {
@@ -86,8 +94,8 @@ export async function editTeam(
   teamId: number,
   input: UpdateTeamRequest,
 ): Promise<ApiResult<Team>> {
-  if (!Number.isInteger(teamId) || teamId <= 0) {
-    return invalidTeamId;
+  if (!isValidId(teamId)) {
+    return invalidId("team");
   }
   const validated = validateTeam(input);
   if (!validated.ok) {
@@ -104,8 +112,8 @@ export async function editTeam(
 
 // Redirects to /teams on success, so it only returns on failure
 export async function removeTeam(teamId: number): Promise<ApiResult<null>> {
-  if (!Number.isInteger(teamId) || teamId <= 0) {
-    return invalidTeamId;
+  if (!isValidId(teamId)) {
+    return invalidId("team");
   }
 
   const rosterIds = await getRosterIds(teamId);
@@ -118,4 +126,89 @@ export async function removeTeam(teamId: number): Promise<ApiResult<null>> {
   // Hero ratings embed the rated player's team id
   updateTag("heroes");
   redirect("/teams");
+}
+
+// Teams include their roster and hero ratings embed the rated player
+function invalidatePlayer(
+  playerId: number,
+  teamIds: (number | null | undefined)[],
+) {
+  updateTag("players");
+  updateTag(`player-${playerId}`);
+  updateTag("heroes");
+
+  const affectedTeams = new Set(
+    teamIds.filter((id): id is number => typeof id === "number"),
+  );
+  if (affectedTeams.size > 0) {
+    updateTag("teams");
+    for (const teamId of affectedTeams) {
+      updateTag(`team-${teamId}`);
+    }
+  }
+}
+
+export async function editPlayer(
+  playerId: number,
+  input: CreatePlayerRequest,
+): Promise<ApiResult<Player>> {
+  if (!isValidId(playerId)) {
+    return invalidId("player");
+  }
+  const validated = validatePlayer(input);
+  if (!validated.ok) {
+    return validated;
+  }
+
+  const current = await getPlayerById(playerId);
+  if (!current.ok) {
+    return {
+      ok: false,
+      error: `Nothing was saved, because the player's current ratings could not be loaded. ${current.error}`,
+    };
+  }
+
+  const ratings: UpdatePlayerRating[] = (current.data.ratings ?? []).flatMap(
+    (rating) =>
+      rating.hero
+        ? [
+            {
+              rating_id: rating.rating_id,
+              ratings: rating.ratings,
+              hero: { hero_id: rating.hero.hero_id },
+            },
+          ]
+        : [],
+  );
+
+  const result = await updatePlayer(playerId, {
+    ...validated.data,
+    ratings,
+  });
+  if (result.ok) {
+    invalidatePlayer(playerId, [
+      current.data.current_team?.team_id,
+      validated.data.current_team,
+    ]);
+  }
+
+  return result;
+}
+
+// Redirects to /players on success, so it only returns on failure
+export async function removePlayer(playerId: number): Promise<ApiResult<null>> {
+  if (!isValidId(playerId)) {
+    return invalidId("player");
+  }
+
+  const current = await getPlayerById(playerId);
+  const result = await deletePlayer(playerId);
+  if (!result.ok) {
+    return result;
+  }
+
+  invalidatePlayer(playerId, [
+    current.ok ? current.data.current_team?.team_id : null,
+  ]);
+  redirect("/players");
 }

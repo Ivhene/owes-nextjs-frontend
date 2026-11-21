@@ -57,6 +57,18 @@ export type CreateTeamRequest = {
 // PUT replaces every editable field, so it takes the same body as POST
 export type UpdateTeamRequest = CreateTeamRequest;
 
+// The player PUT requires `ratings` (null is rejected) and can only update
+// existing ratings by id, so the current ratings are always sent back
+export type UpdatePlayerRating = {
+  rating_id: number;
+  ratings: string;
+  hero: { hero_id: number };
+};
+
+export type UpdatePlayerRequest = CreatePlayerRequest & {
+  ratings: UpdatePlayerRating[];
+};
+
 // POST responses only contain part of the created item
 export type CreatedPlayer = { player_id: number; gamertag: string };
 export type CreatedTeam = { team_id: number; team_name: string };

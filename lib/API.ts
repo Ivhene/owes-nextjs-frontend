@@ -8,6 +8,7 @@ import {
   Player,
   Role,
   Team,
+  UpdatePlayerRequest,
   UpdateTeamRequest,
 } from "./types";
 
@@ -197,6 +198,17 @@ export function createTeam(
   team: CreateTeamRequest,
 ): Promise<ApiResult<CreatedTeam>> {
   return sendJson<CreatedTeam>("POST", "/teams", "Team", team);
+}
+
+export function updatePlayer(
+  playerId: number,
+  player: UpdatePlayerRequest,
+): Promise<ApiResult<Player>> {
+  return sendJson<Player>("PUT", `/players/${playerId}`, "Player", player);
+}
+
+export function deletePlayer(playerId: number): Promise<ApiResult<null>> {
+  return deleteResource(`/players/${playerId}`, "Player");
 }
 
 // PUT replaces every editable field; the response is the team without players

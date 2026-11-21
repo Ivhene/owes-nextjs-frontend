@@ -161,12 +161,11 @@ export function SingleTeamPage({ teamPromise }: SingleTeamPageProps) {
             </span>
           </div>
 
-          <TeamActions team={team} className="absolute right-2.5 top-2.5" />
-
-          <div className="absolute inset-x-0 bottom-0 border-t border-white/10 bg-ow-bg-deep/88 px-3 py-2 backdrop-blur-sm">
-            <span className="block truncate text-center text-sm font-extrabold uppercase tracking-[0.18em] text-ow-text">
+          <div className="absolute inset-x-0 bottom-0 flex items-center gap-2 border-t border-white/10 bg-ow-bg-deep/88 py-1.5 pl-3 pr-1.5 backdrop-blur-sm">
+            <span className="min-w-0 flex-1 truncate text-sm font-extrabold uppercase tracking-[0.18em] text-ow-text">
               {team.team_name}
             </span>
+            <TeamActions team={team} />
           </div>
         </div>
 

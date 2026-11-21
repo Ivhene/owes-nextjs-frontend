@@ -7,13 +7,17 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { getRatingRank, getRatingTier } from "@/lib/ratings";
-import { ApiResult, Player } from "@/lib/types";
+import { ApiResult, Player, Role, Team } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
 import { use } from "react";
 
+import { PlayerActions } from "./PlayerActions";
+
 type SinglePlayerPageProps = {
   playerPromise: Promise<ApiResult<Player>>;
+  teams: Promise<ApiResult<Team[]>>;
+  roles: Promise<ApiResult<Role[]>>;
 };
 
 function formatBirthday(birthday: string | null) {
@@ -28,7 +32,11 @@ function formatBirthday(birthday: string | null) {
   }).format(new Date(birthday));
 }
 
-export function SinglePlayerPage({ playerPromise }: SinglePlayerPageProps) {
+export function SinglePlayerPage({
+  playerPromise,
+  teams,
+  roles,
+}: SinglePlayerPageProps) {
   const result = use(playerPromise);
 
   if (!result.ok) {
@@ -196,10 +204,11 @@ export function SinglePlayerPage({ playerPromise }: SinglePlayerPageProps) {
             </Tooltip>
           )}
 
-          <div className="absolute inset-x-0 bottom-0 border-t border-white/10 bg-ow-bg-deep/88 px-3 py-2 backdrop-blur-sm">
-            <span className="block truncate text-center text-sm font-extrabold uppercase tracking-[0.18em] text-ow-text">
+          <div className="absolute inset-x-0 bottom-0 flex items-center gap-2 border-t border-white/10 bg-ow-bg-deep/88 py-1.5 pl-3 pr-1.5 backdrop-blur-sm">
+            <span className="min-w-0 flex-1 truncate text-sm font-extrabold uppercase tracking-[0.18em] text-ow-text">
               {player.gamertag}
             </span>
+            <PlayerActions player={player} teams={teams} roles={roles} />
           </div>
         </div>
 
