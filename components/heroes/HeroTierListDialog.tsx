@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import {
   Dialog,
   DialogContent,
@@ -16,16 +18,26 @@ type HeroTierListDialogProps = {
   selectedHero: Hero | null;
 };
 
+type TierPlayer = {
+  playerId: number | null;
+  gamertag: string;
+};
+
+const chipClassName =
+  "inline-flex items-center rounded-full border border-ow-border/60 bg-ow-surface px-2 py-0.5 text-xs font-semibold text-ow-text sm:px-2.5 sm:py-1 sm:text-sm";
+
 function TierRow({
   tier,
   players,
   isFirst,
   isLast,
+  onPlayerClick,
 }: {
   tier: TierConfig;
-  players: string[];
+  players: TierPlayer[];
   isFirst: boolean;
   isLast: boolean;
+  onPlayerClick: () => void;
 }) {
   return (
     <div
@@ -49,14 +61,28 @@ function TierRow({
       </div>
       <div className="flex items-start px-2 py-2">
         <div className="flex min-h-12 w-full flex-wrap content-start gap-1 rounded-none border border-dashed border-ow-border/70 bg-background/40 p-2">
-          {players.map((player) => (
-            <span
-              key={`${tier.label}-${player}`}
-              className="inline-flex items-center rounded-full border border-ow-border/60 bg-ow-surface px-2 py-0.5 text-xs font-semibold text-ow-text sm:px-2.5 sm:py-1 sm:text-sm"
-            >
-              {player}
-            </span>
-          ))}
+          {players.map((player) =>
+            player.playerId === null ? (
+              <span
+                key={`${tier.label}-${player.gamertag}`}
+                className={chipClassName}
+              >
+                {player.gamertag}
+              </span>
+            ) : (
+              <Link
+                key={player.playerId}
+                href={`/players/${player.playerId}`}
+                onClick={onPlayerClick}
+                className={cn(
+                  chipClassName,
+                  "transition-colors hover:border-ow-orange/60 hover:text-ow-orange focus-visible:border-ow-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ow-orange/50",
+                )}
+              >
+                {player.gamertag}
+              </Link>
+            ),
+          )}
         </div>
       </div>
     </div>
@@ -73,17 +99,24 @@ export function HeroTierListDialog({
   const getRatingTier = (rating: Rating) => rating.ratings.trim().toUpperCase();
 
   const playersByTier = tiers.map((tier) => {
-    const players = Array.from(
-      new Set(
-        ratings
-          .filter((rating) => getRatingTier(rating) === tier.label)
-          .map((rating) => rating.player?.gamertag ?? "Unknown Player"),
-      ),
-    ).sort((a, b) => a.localeCompare(b));
+    const players = new Map<string, TierPlayer>();
+    for (const rating of ratings) {
+      if (getRatingTier(rating) !== tier.label) {
+        continue;
+      }
+      const playerId = rating.player?.player_id ?? null;
+      const gamertag = rating.player?.gamertag ?? "Unknown Player";
+      players.set(playerId === null ? `name-${gamertag}` : `id-${playerId}`, {
+        playerId,
+        gamertag,
+      });
+    }
 
     return {
       tier,
-      players,
+      players: Array.from(players.values()).sort((a, b) =>
+        a.gamertag.localeCompare(b.gamertag),
+      ),
     };
   });
 
@@ -107,6 +140,7 @@ export function HeroTierListDialog({
                     players={players}
                     isFirst={index === 0}
                     isLast={index === playersByTier.length - 1}
+                    onPlayerClick={() => onOpenChange(false)}
                   />
                 ))}
               </div>
