@@ -2,6 +2,7 @@
 
 import { DeleteDialogButton } from "@/components/DetailActions";
 import { ErrorMessage } from "@/components/ErrorMessage";
+import { HeroTierListByIdDialog } from "@/components/heroes/HeroTierListByIdDialog";
 import {
   Tooltip,
   TooltipContent,
@@ -12,7 +13,7 @@ import { getRatingRank, getRatingTier } from "@/lib/ratings";
 import { ApiResult, Hero, Player, Role, Team } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
-import { use } from "react";
+import { use, useState } from "react";
 
 import { PlayerActions } from "./PlayerActions";
 import { RatePlayerDialog } from "./RatePlayerDialog";
@@ -43,6 +44,8 @@ export function SinglePlayerPage({
   heroes,
 }: SinglePlayerPageProps) {
   const result = use(playerPromise);
+  const [tierListHeroId, setTierListHeroId] = useState<number | null>(null);
+  const [tierListOpen, setTierListOpen] = useState(false);
 
   if (!result.ok) {
     return <ErrorMessage title="Player unavailable" message={result.error} />;
@@ -117,20 +120,31 @@ export function SinglePlayerPage({
                         }
                       >
                         <td className="border-b border-ow-border/50 px-4 py-3 sm:px-6">
-                          <div className="flex items-center gap-3">
-                            <div className="relative size-12 shrink-0 overflow-hidden rounded-2xl border border-ow-border/60 bg-ow-bg-muted">
+                          <button
+                            type="button"
+                            disabled={!hero}
+                            onClick={() => {
+                              if (hero) {
+                                setTierListHeroId(hero.hero_id);
+                                setTierListOpen(true);
+                              }
+                            }}
+                            aria-label={`Show ${hero?.hero_name ?? "hero"} tier list`}
+                            className="group flex max-w-full items-center gap-3 rounded-2xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ow-orange/50"
+                          >
+                            <div className="relative size-12 shrink-0 overflow-hidden rounded-2xl border border-ow-border/60 bg-ow-bg-muted transition-colors group-hover:border-ow-orange/60">
                               <Image
                                 src={
                                   hero?.hero_image ?? "/transparent_logo.png"
                                 }
-                                alt={hero?.hero_name ?? "Hero"}
+                                alt=""
                                 fill
                                 sizes="48px"
                                 className="object-contain p-1"
                               />
                             </div>
                             <div className="min-w-0">
-                              <p className="truncate text-sm font-semibold text-ow-text sm:text-base">
+                              <p className="truncate text-sm font-semibold text-ow-text transition-colors group-hover:text-ow-orange sm:text-base">
                                 {hero?.hero_name ?? "Unknown hero"}
                               </p>
                               {rating.rating_user ? (
@@ -139,7 +153,7 @@ export function SinglePlayerPage({
                                 </p>
                               ) : null}
                             </div>
-                          </div>
+                          </button>
                         </td>
                         <td className="border-b border-ow-border/50 px-4 py-3 sm:px-6">
                           <div className="flex items-center justify-end gap-2">
@@ -170,6 +184,13 @@ export function SinglePlayerPage({
             </div>
           )}
         </div>
+
+        <HeroTierListByIdDialog
+          heroes={heroes}
+          heroId={tierListHeroId}
+          open={tierListOpen}
+          onOpenChange={setTierListOpen}
+        />
       </section>
 
       <aside className="order-first h-fit overflow-hidden rounded-2xl border sm:grid sm:grid-cols-[200px_minmax(0,1fr)] sm:rounded-3xl lg:sticky lg:top-6 lg:order-none lg:block border-ow-border/70 bg-ow-bg-deep/60 shadow-[0_18px_44px_rgba(15,23,42,0.16)] backdrop-blur-sm">
