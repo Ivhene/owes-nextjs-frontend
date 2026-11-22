@@ -1,6 +1,12 @@
 import { allowedImageHosts, isAllowedImageUrl } from "./image-hosts";
+import { isRatingValue } from "./ratings";
 import { isRegion } from "./regions";
-import { ApiResult, CreatePlayerRequest, CreateTeamRequest } from "./types";
+import {
+  ApiResult,
+  CreatePlayerRequest,
+  CreateTeamRequest,
+  RatePlayerRequest,
+} from "./types";
 
 // Column sizes in the database; longer values make the backend return a 500
 export const GAMERTAG_MAX_LENGTH = 12;
@@ -104,4 +110,17 @@ export function validateTeam(
       competing_region: input.competing_region,
     },
   };
+}
+
+export function validateRating(
+  input: RatePlayerRequest,
+): ApiResult<RatePlayerRequest> {
+  if (!isId(input.hero)) {
+    return { ok: false, error: "Choose a hero." };
+  }
+  if (!isRatingValue(input.rating)) {
+    return { ok: false, error: "Choose a rating." };
+  }
+
+  return { ok: true, data: { hero: input.hero, rating: input.rating } };
 }

@@ -6,6 +6,7 @@ import {
   CreateTeamRequest,
   Hero,
   Player,
+  RatePlayerRequest,
   Role,
   Team,
   UpdatePlayerRequest,
@@ -209,6 +210,27 @@ export function updatePlayer(
 
 export function deletePlayer(playerId: number): Promise<ApiResult<null>> {
   return deleteResource(`/players/${playerId}`, "Player");
+}
+
+export function deleteRating(
+  playerId: number,
+  ratingId: number,
+): Promise<ApiResult<null>> {
+  return deleteResource(`/players/${playerId}/ratings/${ratingId}`, "Rating");
+}
+
+// Upsert: replaces the player's existing rating for the hero, if any.
+// The response is the full player with all ratings
+export function ratePlayer(
+  playerId: number,
+  rating: RatePlayerRequest,
+): Promise<ApiResult<Player>> {
+  return sendJson<Player>(
+    "POST",
+    `/players/${playerId}/ratings`,
+    "Rating",
+    rating,
+  );
 }
 
 // PUT replaces every editable field; the response is the team without players

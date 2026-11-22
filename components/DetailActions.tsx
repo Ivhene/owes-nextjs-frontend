@@ -80,8 +80,9 @@ type DeleteDialogButtonProps = {
   label: string;
   title: string;
   description: string;
-  // Server action that redirects on success, so it only returns on failure
+  // Server action; actions that redirect on success only return on failure
   onDelete: () => Promise<ApiResult<unknown>>;
+  className?: string;
 };
 
 export function DeleteDialogButton({
@@ -89,6 +90,7 @@ export function DeleteDialogButton({
   title,
   description,
   onDelete,
+  className,
 }: DeleteDialogButtonProps) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -106,7 +108,9 @@ export function DeleteDialogButton({
     setError(null);
     startTransition(async () => {
       const result = await onDelete();
-      if (!result.ok) {
+      if (result.ok) {
+        setOpen(false);
+      } else {
         setError(result.error);
       }
     });
@@ -121,7 +125,7 @@ export function DeleteDialogButton({
               variant="ghost"
               size="icon-sm"
               aria-label={label}
-              className={cn(iconButtonClass, "hover:text-ow-danger")}
+              className={cn(iconButtonClass, "hover:text-ow-danger", className)}
             >
               <Trash2Icon />
             </Button>

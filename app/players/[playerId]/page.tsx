@@ -1,5 +1,5 @@
 import { SinglePlayerPage } from "@/components/players/SinglePlayerPage";
-import { getPlayerById, getRoles, getTeams } from "@/lib/API";
+import { getHeroes, getPlayerById, getRoles, getTeams } from "@/lib/API";
 
 export default async function PlayerPage(props: {
   params: Promise<{ playerId: string }>;
@@ -13,6 +13,7 @@ export default async function PlayerPage(props: {
       playerPromise={player}
       teams={getTeams()}
       roles={getRoles()}
+      heroes={getHeroes()}
     />
   );
 }

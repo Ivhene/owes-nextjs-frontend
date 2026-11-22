@@ -1,23 +1,27 @@
 "use client";
 
+import { DeleteDialogButton } from "@/components/DetailActions";
 import { ErrorMessage } from "@/components/ErrorMessage";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { removePlayerRating } from "@/lib/actions";
 import { getRatingRank, getRatingTier } from "@/lib/ratings";
-import { ApiResult, Player, Role, Team } from "@/lib/types";
+import { ApiResult, Hero, Player, Role, Team } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
 import { use } from "react";
 
 import { PlayerActions } from "./PlayerActions";
+import { RatePlayerDialog } from "./RatePlayerDialog";
 
 type SinglePlayerPageProps = {
   playerPromise: Promise<ApiResult<Player>>;
   teams: Promise<ApiResult<Team[]>>;
   roles: Promise<ApiResult<Role[]>>;
+  heroes: Promise<ApiResult<Hero[]>>;
 };
 
 function formatBirthday(birthday: string | null) {
@@ -36,6 +40,7 @@ export function SinglePlayerPage({
   playerPromise,
   teams,
   roles,
+  heroes,
 }: SinglePlayerPageProps) {
   const result = use(playerPromise);
 
@@ -64,13 +69,16 @@ export function SinglePlayerPage({
   return (
     <div className="grid gap-4 pb-12 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:pb-40 xl:grid-cols-[minmax(0,1fr)_360px]">
       <section className="min-w-0 rounded-2xl border sm:rounded-3xl border-ow-border/70 bg-ow-bg-deep/55 shadow-[0_18px_44px_rgba(15,23,42,0.16)] backdrop-blur-sm">
-        <div className="border-b border-ow-border/70 px-4 py-3 sm:px-6 sm:py-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-ow-text/60">
-            Hero ratings
-          </p>
-          <h1 className="mt-1 text-2xl font-black tracking-tight text-ow-text sm:text-3xl">
-            {player.gamertag}
-          </h1>
+        <div className="flex items-center justify-between gap-3 border-b border-ow-border/70 px-4 py-3 sm:px-6 sm:py-4">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-ow-text/60">
+              Hero ratings
+            </p>
+            <h1 className="mt-1 truncate text-2xl font-black tracking-tight text-ow-text sm:text-3xl">
+              {player.gamertag}
+            </h1>
+          </div>
+          <RatePlayerDialog player={player} heroes={heroes} />
         </div>
 
         <div className="overflow-hidden rounded-b-2xl sm:rounded-b-3xl">
@@ -133,12 +141,26 @@ export function SinglePlayerPage({
                             </div>
                           </div>
                         </td>
-                        <td className="border-b border-ow-border/50 px-4 py-3 text-right sm:px-6">
-                          <span
-                            className={`inline-flex min-w-12 justify-center rounded-full border border-transparent px-3 py-1 text-sm font-extrabold tracking-[0.18em] ${badgeClassName}`}
-                          >
-                            {ratingLabel}
-                          </span>
+                        <td className="border-b border-ow-border/50 px-4 py-3 sm:px-6">
+                          <div className="flex items-center justify-end gap-2">
+                            <DeleteDialogButton
+                              label="Delete rating"
+                              title={`Delete ${hero?.hero_name ?? "this"} rating?`}
+                              description={`This permanently removes the ${ratingLabel} rating on ${hero?.hero_name ?? "this hero"} from ${player.gamertag}.`}
+                              onDelete={() =>
+                                removePlayerRating(
+                                  player.player_id,
+                                  rating.rating_id,
+                                )
+                              }
+                              className="border-transparent bg-transparent text-ow-text/55 hover:bg-ow-danger/10"
+                            />
+                            <span
+                              className={`inline-flex min-w-12 justify-center rounded-full border border-transparent px-3 py-1 text-sm font-extrabold tracking-[0.18em] ${badgeClassName}`}
+                            >
+                              {ratingLabel}
+                            </span>
+                          </div>
                         </td>
                       </tr>
                     );

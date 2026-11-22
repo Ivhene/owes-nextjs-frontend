@@ -7,9 +7,11 @@ import {
   createPlayer,
   createTeam,
   deletePlayer,
+  deleteRating,
   deleteTeam,
   getPlayerById,
   getTeamById,
+  ratePlayer,
   updatePlayer,
   updateTeam,
 } from "./API";
@@ -20,11 +22,12 @@ import {
   CreatePlayerRequest,
   CreateTeamRequest,
   Player,
+  RatePlayerRequest,
   Team,
   UpdatePlayerRating,
   UpdateTeamRequest,
 } from "./types";
-import { validatePlayer, validateTeam } from "./validation";
+import { validatePlayer, validateRating, validateTeam } from "./validation";
 
 export async function addPlayer(
   input: CreatePlayerRequest,
@@ -189,6 +192,50 @@ export async function editPlayer(
     invalidatePlayer(playerId, [
       current.data.current_team?.team_id,
       validated.data.current_team,
+    ]);
+  }
+
+  return result;
+}
+
+export async function savePlayerRating(
+  playerId: number,
+  input: RatePlayerRequest,
+): Promise<ApiResult<Player>> {
+  if (!isValidId(playerId)) {
+    return invalidId("player");
+  }
+  const validated = validateRating(input);
+  if (!validated.ok) {
+    return validated;
+  }
+
+  const result = await ratePlayer(playerId, validated.data);
+  if (result.ok) {
+    // Team rosters embed their players' ratings
+    invalidatePlayer(playerId, [result.data.current_team?.team_id]);
+  }
+
+  return result;
+}
+
+export async function removePlayerRating(
+  playerId: number,
+  ratingId: number,
+): Promise<ApiResult<null>> {
+  if (!isValidId(playerId)) {
+    return invalidId("player");
+  }
+  if (!isValidId(ratingId)) {
+    return invalidId("rating");
+  }
+
+  // The DELETE has no response body, so the team comes from the player
+  const current = await getPlayerById(playerId);
+  const result = await deleteRating(playerId, ratingId);
+  if (result.ok) {
+    invalidatePlayer(playerId, [
+      current.ok ? current.data.current_team?.team_id : null,
     ]);
   }
 
